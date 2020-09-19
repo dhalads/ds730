@@ -1,0 +1,11 @@
+
+# Your job is to figure out what each of them did and then answer the
+# following 2 questions:
+#   1. Take the average of all of the wind speeds for March, 2006. Which city had the
+# closest wind speed to 8.30 mph?
+#   2. Take the average of all of the temperatures for 2006. Which city had the closest
+# temperature, in fahrenheit, to 49.65.
+
+Answers
+1. PQR
+2. KLM
