@@ -26,10 +26,15 @@ class LineItem(object):
 #         "InvoiceNo: {}, StockCode: {}, Description: {}, year: {}, horsepower: {}, highway_mpg: {},\
 # city_mpg: {}, width: {}, hybrid: {}".format(self._Make, self._Model_year, self._Model_id,\
 #         self._year, self._horsepower, self._highway_mpg, self._city_mpg, self._width, self._hybrid)
+
+    def get_amount(self):
+        output = 0
+        output = round(self._Quantity * self._UnitPrice, 2)
+        return output
     
     def get_output(self):
         output = ""
-        output = "{},{}\t{},{}".format(self._InvoiceDate.month, self._Country, self._CustomerID,"Amount")
+        output = "{},{}\t{},{}".format(self._InvoiceDate.month, self._Country, self._CustomerID, self.get_amount())
         return output
         
     def parse_line(self, text):
@@ -39,29 +44,51 @@ class LineItem(object):
           self._StockCode = splits[1].strip()
           self._Description = splits[2].strip()
           self._Quantity = int(splits[3])
-        #   self._InvoiceDate = datetime.datetime.strptime(splits[4],"%M/%d/%Y %H:%M") #12/1/2010 8:26
-          self._InvoiceDate = parse(splits[4]) #12/1/2010 8:26
-          self._UnitPrice =float(splits[5])
+          self._InvoiceDate = datetime.datetime.strptime(splits[4],"%m/%d/%Y %H:%M") #12/1/2010 8:26 Note: faster than parse
+        #   self._InvoiceDate = parse(splits[4]) #12/1/2010 8:26
+          self._UnitPrice = float(splits[5])
           self._CustomerID = splits[6].strip()
           self._Country = splits[7].strip()
         except Exception as e:
             raise
-        
 
+    def isValid(self):
+        """
+        docstring
+        """
+        output = True
+        return output
+
+    def reset(self):
+        """
+        docstring
+        """
+        self._InvoiceNo = None
+        self._StockCode = None
+        self._Description = None
+        self._Quantity = None
+        self._InvoiceDate = None
+        self._UnitPrice = None
+        self._CustomerID = None
+        self._Country = None
+# End class LineItem
+        
+aLineItem = LineItem()
 line = sys.stdin.readline()
 while line:
   #Do something with line here to create/output
   #as many (key,value) pairs as you want.
   #Do not add anything above this line. The one 
   #exception is that you can add import statements.
-  if(line.startswith("InvoiceNo")):
-      line = sys.stdin.readline()
-      continue
-  aLineItem = LineItem()
-  aLineItem.parse_line(line)
-  print(aLineItem.get_output(), file = sys.stdout)
-  
-  
-  #Do not add anything below this line.
-  #Read in the next line of the input.
-  line = sys.stdin.readline()
+    if(line.startswith("InvoiceNo")):
+        line = sys.stdin.readline()
+        continue
+    aLineItem.reset()
+    aLineItem.parse_line(line)
+    if(aLineItem.isValid()):
+        print(aLineItem.get_output(), file = sys.stdout)
+
+
+#Do not add anything below this line.
+#Read in the next line of the input.
+    line = sys.stdin.readline()

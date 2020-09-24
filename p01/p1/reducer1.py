@@ -1,49 +1,86 @@
 #!/usr/bin/env python
  
 import sys
- 
-#Variables that keep track of the keys.
-current_key_being_processed = None
-next_key_found = None
+import operator
 
-#Do not add anything above this line. The one
-#exception is that you can add import statements.
+class ReducerOutput(object):
 
-#You can create any global variables you want here that you will use per key.
-#For example, we can create a dictionary variable called temp and/or set a variable to 0:
-#temp = {}
-#temp_num = 0
-#However, we must reset these once a new key is found, see below.
+    def __init__(self, Key=None, Month=None, Country=None):
+        """
+        docstring
+        """
+        self._Key = Key
+        self._Month = Month
+        self._Country = Country
+        self._Data = {}
 
+    def __str__(self):
+        return str(vars(self))
+
+    def reset(self):
+        self._Key = None
+        self._Month = None
+        self._Country = None
+        self._Data = {}
+        
+    def process_line(self, line):
+        key, values = line.split('\t', 1)
+        self.process_key(key)
+        self.process_values(values)
+        
+    def process_key(self , Key):
+        if(self._Key == None):
+            self.set_key(Key)
+        elif(self._Key != Key):
+            self.process_output()
+            self.reset()
+            self.set_key(Key)
+        else:
+            pass
+
+    def process_values(self, Values):
+        customerID, amount = Values.split(",", 1)
+        amount = round(float(amount),2)
+        if(self._Data.get(customerID) is not None):
+            self._Data[customerID] = self._Data[customerID] + amount
+        else:
+            self._Data[customerID] = amount
+
+    def process_output(self):
+        sorted_data = sorted(self._Data.items(), key=operator.itemgetter(1), reverse=True)
+        data_count = len(sorted_data)
+        customers = []
+        if(data_count>0):
+            customerId, top_amount = sorted_data[0]
+            customers.append(customerId )
+            for i in range(1, data_count):
+                customerId, amount = sorted_data[i]
+                if(amount == top_amount):
+                    customers.append(customerId)
+            customers.sort()
+            customers_output = ""
+            for i in range(0, len(customers)):
+                customers_output = customers_output + customers[i]
+                if(i != len(customers)-1):
+                   customers_output = customers_output + ","
+            # sorted(self._Data.items(), key=lambda item: item[1])
+            output = "{},{}:{}".format(self._Month, self._Country,customers_output)
+            if(len(customers)>1):
+                print(str(self))
+            print(str(output))
+
+    def set_key(self, Key):
+        """
+        docstring
+        """
+        self._Key = Key
+        month, country = Key.split(",", 1)
+        self._Month = month
+        self._Country = country
+
+
+reducerOutput = ReducerOutput(None, None, None)
 for line in sys.stdin:
-  line = line.strip()
-  next_key_found, value = line.split('\t', 1)
-  if current_key_being_processed == next_key_found:
-    #The next key read in is the same one we've been processing. 
-    #You'll likely want to add some code here.
-
-  else:
-    #One of two things happened here:
-    #1. The first key was found.
-    #2. A new key was found.
-
-    if current_key_being_processed:
-      #2. happened, a new key was found.
-      #Output something based on the (key,value) pairs that 
-      #we have just seen where all of them had the same key.
-
-      #end of the if statement for number 2. happening.
-      
-    #Since the next key found was a new key, we need to clear any global variables 
-    #we have created right now. If we do not clear them out, our code is not stateless.
-    #Therefore, we clear the dictionary and reset the variable to 0.
-    #temp = {}
-    #temp_num = 0
-      
-    #Lastly, we set the current_key_being_processed to be the new key we just read in.
-    current_key_being_processed = next_key_found
-
-  #for loop ends here
-
-if current_key_being_processed == next_key_found:
-    #Add any code you want here to take care of the last key that was processed.
+    line = line.strip()
+    reducerOutput.process_line(line)
+reducerOutput.process_output()
