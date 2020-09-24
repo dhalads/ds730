@@ -2,6 +2,7 @@
  
 import sys
 import operator
+import os
 
 class ReducerOutput(object):
 
@@ -65,9 +66,15 @@ class ReducerOutput(object):
                    customers_output = customers_output + ","
             # sorted(self._Data.items(), key=lambda item: item[1])
             output = "{},{}:{}".format(self._Month, self._Country,customers_output)
-            if(len(customers)>1):
+            # print(os.environ.get('python_debug', 0))
+            if(len(customers)>1 and os.environ.get('python_debug', 0) == '1'):
                 print(str(self))
             print(str(output))
+            # and os.environ['python_debug'] == '1'
+    
+
+    def coalesce(self, *arg):
+         return reduce(lambda x, y: x if x is not None else y, arg)
 
     def set_key(self, Key):
         """

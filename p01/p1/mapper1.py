@@ -34,10 +34,11 @@ class LineItem(object):
     
     def get_output(self):
         output = ""
-        output = "{},{}\t{},{}".format(self._InvoiceDate.month, self._Country, self._CustomerID, self.get_amount())
+        output = "{},{}\t{},{}".format(self._InvoiceDate.strftime("%m"), self._Country, self._CustomerID, self.get_amount())
         return output
         
     def parse_line(self, text):
+        output = True
         try:
           splits = line.split(',')
           self._InvoiceNo = splits[0].strip()
@@ -50,13 +51,49 @@ class LineItem(object):
           self._CustomerID = splits[6].strip()
           self._Country = splits[7].strip()
         except Exception as e:
-            raise
+            # Record exception to stderr
+            print("Error Exception {} :{}".format(str(e), line), file = sys.stderr, end="")
+            output = False
+        else:
+            isValidOutput, message = self.isValid()
+            if(not isValidOutput):
+                output = False
+                print("Error isValid {} :{}".format(message, line), file = sys.stderr, end="")
+        return output
+
+    def exceptionOnBlank(self, Value):
+        """
+        docstring
+        """
+        if(Value is None or len(Value) == 0):
+            raise Exception("Value is blank")
 
     def isValid(self):
         """
         docstring
         """
         output = True
+        message = ""
+        variables = vars(self)
+        for key in variables.keys():
+            if(key in ("_Quantity", "_InvoiceDate", "_UnitPrice", "_Description")):
+                pass
+            else:
+                value = variables.get(key)
+                if(self.isEmpty(value)):
+                    output = False
+                    message = "{} is empty".format(key)
+                    break
+        return (output, message)
+        
+
+    def isEmpty(self, Value):
+        """
+        docstring
+        """
+        output = False
+        if(Value is None or len(Value) == 0):
+            output = True
         return output
 
     def reset(self):
@@ -84,8 +121,7 @@ while line:
         line = sys.stdin.readline()
         continue
     aLineItem.reset()
-    aLineItem.parse_line(line)
-    if(aLineItem.isValid()):
+    if(aLineItem.parse_line(line)):
         print(aLineItem.get_output(), file = sys.stdout)
 
 
