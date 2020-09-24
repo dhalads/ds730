@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
 import sys
+import datetime
+from dateutil.parser import parse
 
 # InvoiceNo,StockCode,Description,Quantity,InvoiceDate,UnitPrice,CustomerID,Country
 class LineItem(object):
-    def __init__(self, InvoiceNo, StockCode, Description, Quantity, InvoiceDate, UnitPrice, CustomerID, widthCountry):
+    def __init__(self, InvoiceNo=None, StockCode=None, Description=None, Quantity=None, InvoiceDate=None, UnitPrice=None, CustomerID=None, Country=None):
         self._InvoiceNo = InvoiceNo
         self._StockCode = StockCode
         self._Description = Description
@@ -18,27 +20,32 @@ class LineItem(object):
 #     def __repr__(self):
 #         return "Car('" + self.Make + "', " +  str(self.year) +  ")"
 
-#     def __str__(self):
-#         return "Make: {}, Model Year: {}, Model_id: {}, year: {}, horsepower: {}, highway_mpg: {},\
+    def __str__(self):
+        return str(vars(self))
+        
+#         "InvoiceNo: {}, StockCode: {}, Description: {}, year: {}, horsepower: {}, highway_mpg: {},\
 # city_mpg: {}, width: {}, hybrid: {}".format(self._Make, self._Model_year, self._Model_id,\
 #         self._year, self._horsepower, self._highway_mpg, self._city_mpg, self._width, self._hybrid)
     
-#     def get_make(self):
-#         return self._Make
+    def get_output(self):
+        output = ""
+        output = "{},{}\t{},{}".format(self._InvoiceDate.month, self._Country, self._CustomerID,"Amount")
+        return output
         
     def parse_line(self, text):
         try:
           splits = line.split(',')
-          self._InvoiceNo = splits[0].trim()
-          self._StockCode = splits[1]
-          self._Description = splits[1]
-          self._Quantity = splits[1]
-          self._InvoiceDate = splits[1]
-          self._UnitPrice = splits[1]
-          self._CustomerID = splits[1]
-          self._Country = splits[1]
+          self._InvoiceNo = splits[0].strip()
+          self._StockCode = splits[1].strip()
+          self._Description = splits[2].strip()
+          self._Quantity = int(splits[3])
+        #   self._InvoiceDate = datetime.datetime.strptime(splits[4],"%M/%d/%Y %H:%M") #12/1/2010 8:26
+          self._InvoiceDate = parse(splits[4]) #12/1/2010 8:26
+          self._UnitPrice =float(splits[5])
+          self._CustomerID = splits[6].strip()
+          self._Country = splits[7].strip()
         except Exception as e:
-            pass
+            raise
         
 
 line = sys.stdin.readline()
@@ -47,8 +54,12 @@ while line:
   #as many (key,value) pairs as you want.
   #Do not add anything above this line. The one 
   #exception is that you can add import statements.
+  if(line.startswith("InvoiceNo")):
+      line = sys.stdin.readline()
+      continue
   aLineItem = LineItem()
   aLineItem.parse_line(line)
+  print(aLineItem.get_output(), file = sys.stdout)
   
   
   #Do not add anything below this line.
