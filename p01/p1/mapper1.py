@@ -2,7 +2,6 @@
 
 import sys
 import datetime
-from dateutil.parser import parse
 
 # InvoiceNo,StockCode,Description,Quantity,InvoiceDate,UnitPrice,CustomerID,Country
 class LineItem(object):
@@ -45,20 +44,19 @@ class LineItem(object):
           self._StockCode = splits[1].strip()
           self._Description = splits[2].strip()
           self._Quantity = int(splits[3])
-          self._InvoiceDate = datetime.datetime.strptime(splits[4],"%m/%d/%Y %H:%M") #12/1/2010 8:26 Note: faster than parse
-        #   self._InvoiceDate = parse(splits[4]) #12/1/2010 8:26
+          self._InvoiceDate = datetime.datetime.strptime(splits[4],"%m/%d/%Y %H:%M") #12/1/2010 8:26
           self._UnitPrice = float(splits[5])
           self._CustomerID = splits[6].strip()
           self._Country = splits[7].strip()
         except Exception as e:
             # Record exception to stderr
-            print("Error Exception {} :{}".format(str(e), line), file = sys.stderr, end="")
+            sys.stderr.write("Error Exception {} :{}".format(str(e), line))
             output = False
         else:
             isValidOutput, message = self.isValid()
             if(not isValidOutput):
                 output = False
-                print("Error isValid {} :{}".format(message, line), file = sys.stderr, end="")
+                sys.stderr.write("Error isValid {} :{}".format(message, line))
         return output
 
     def exceptionOnBlank(self, Value):
@@ -122,7 +120,7 @@ while line:
         continue
     aLineItem.reset()
     if(aLineItem.parse_line(line)):
-        print(aLineItem.get_output(), file = sys.stdout)
+        print(aLineItem.get_output())
 
 
 #Do not add anything below this line.
