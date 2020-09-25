@@ -22,10 +22,6 @@ class LineItem(object):
     def __str__(self):
         return str(vars(self))
         
-#         "InvoiceNo: {}, StockCode: {}, Description: {}, year: {}, horsepower: {}, highway_mpg: {},\
-# city_mpg: {}, width: {}, hybrid: {}".format(self._Make, self._Model_year, self._Model_id,\
-#         self._year, self._horsepower, self._highway_mpg, self._city_mpg, self._width, self._hybrid)
-
     def get_amount(self):
         output = 0
         output = round(self._Quantity * self._UnitPrice, 2)
