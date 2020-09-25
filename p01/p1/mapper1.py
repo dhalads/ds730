@@ -49,10 +49,14 @@ class LineItem(object):
             sys.stderr.write("Error Exception {} :{}".format(str(e), line))
             output = False
         else:
-            isValidOutput, message = self.isValid()
-            if(not isValidOutput):
+            if(self._InvoiceNo.startswith("C")):
+                self.reset()
                 output = False
-                sys.stderr.write("Error isValid {} :{}".format(message, line))
+            else:
+                isValidOutput, message = self.isValid()
+                if(not isValidOutput):
+                    output = False
+                    sys.stderr.write("Error isValid {} :{}".format(message, line))
         return output
 
     def exceptionOnBlank(self, Value):
@@ -78,6 +82,9 @@ class LineItem(object):
                     output = False
                     message = "{} is empty".format(key)
                     break
+        if(output):
+            if(self._InvoiceNo.startswith("C")):
+                output = False
         return (output, message)
         
 
