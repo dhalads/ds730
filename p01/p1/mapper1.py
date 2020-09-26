@@ -32,10 +32,10 @@ class LineItem(object):
         output = "{},{}\t{},{}".format(self._InvoiceDate.strftime("%m"), self._Country, self._CustomerID, self.get_amount())
         return output
         
-    def parse_line(self, text):
+    def parse_line(self, Line):
         output = True
         try:
-          splits = line.split(',')
+          splits = Line.split(',')
           self._InvoiceNo = splits[0].strip()
           self._StockCode = splits[1].strip()
           self._Description = splits[2].strip()

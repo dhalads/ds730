@@ -15,16 +15,15 @@ class MapperOutput(object):
         output = "{},{}\t{},{}".format(self._InvoiceDate.strftime("%m"), self._Country, self._CustomerID, self.get_amount())
         return output
         
-    def parse_line(self, text):
+    def parse_line(self, Line):
         output = True
         try:
-          words = line.split(' ')
-          words = [x.strip() for x in words]
-          for word in words:
-              word = word.strip()
-              vowels = self.get_vowels(word)
-              output = "{}\t1".format(vowels)
-              print(output)
+            words = Line.split(' ')
+            for word in words:
+                word = word.strip()
+                vowels = self.get_vowels(word)
+                output = "{}\t1".format(vowels)
+                print(output)
         except Exception as e:
             # Record exception to stderr
             sys.stderr.write("Error Exception {} : {} :: {}".format(str(e), word, line))

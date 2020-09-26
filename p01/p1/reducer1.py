@@ -73,9 +73,6 @@ class ReducerOutput(object):
             # and os.environ['python_debug'] == '1'
     
 
-    def coalesce(self, *arg):
-         return reduce(lambda x, y: x if x is not None else y, arg)
-
     def set_key(self, Key):
         """
         docstring
