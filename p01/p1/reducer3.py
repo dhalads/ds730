@@ -1,6 +1,7 @@
 #!/usr/bin/env python
  
 import sys
+import os
 
 class Person(object):
 
@@ -15,8 +16,51 @@ class Person(object):
         return str(vars(self))
 
     def findPotentialContacts(self):
-        for friend in self._Friends:
-            id = friend._ID
+        sharedContacts = {}
+        num_friends = len(self._Friends)
+        for i in range(0, num_friends):
+            friendi = self._Friends[i]._FriendIDs
+            for id in friendi:
+                if(self.isFriend(id)):
+                    continue
+                count = sharedContacts.get(id)
+                if(count is None):
+                    #check number of common friends
+                    count = 0
+                    for j in range(i+1, num_friends):
+                        friendj = self._Friends[j]._FriendIDs
+                        if(id in friendj):
+                            count = count + 1
+                    sharedContacts[id] = count
+                else:
+                    pass
+        # self._MightKnow = sharedContacts
+        self._MightKnow = []
+        self._ProbablyKnow = []
+        for key in sharedContacts.keys():
+            count = sharedContacts.get(key)
+            if(count == 2 or count == 3):
+                self._MightKnow.append(key)
+            elif(count > 3):
+                self._ProbablyKnow.append(key)
+        self._MightKnow.sort()
+        self._ProbablyKnow.sort()
+
+    def isFriend(self, ID):
+        output = False
+        if(ID in self._FriendIDs):
+            output = True
+        return output
+
+    def get_output(self):
+        output = self._ID + ":"
+        if(len(self._MightKnow) > 0):
+            output = output + "Might(" + ",".join(self._MightKnow) + ")"
+            if(len(self._ProbablyKnow)>0):
+                output = output + " "
+        if(len(self._ProbablyKnow)>0):
+            output = output + "Probably(" + ",".join(self._ProbablyKnow) + ")"
+        return output
 
 
 class ReducerOutput(object):
@@ -67,8 +111,11 @@ class ReducerOutput(object):
             self._Person._Friends.append(person)
 
     def process_output(self):
-        # output = "{}:{}".format(self._Key, self._Count)
-        print(str(self))
+        self._Person.findPotentialContacts()
+        output = self._Person.get_output()
+        if(os.environ.get('python_debug', 0) == '1'):
+            print(str(self))
+        print(output)
     
     def set_key(self, Key):
         """
