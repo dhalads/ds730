@@ -20,20 +20,21 @@ class ReducerOutput(object):
         self._Key = None
         self._Count = 0
         
-    def process_line(self, line):
+    def process_line(self, Line):
         try:
-            countTab = line.count("\t")
+            Line = Line.strip()
+            countTab = Line.count("\t")
             if(countTab == 0):
                 key = ""
-                values = line.strip()
+                values = Line.strip()
             else:
-                key, values = line.split('\t', 1)
+                key, values = Line.split('\t', 1)
 
             self.process_key(key)
             self.process_values(values)
         except Exception as e:
             # Record exception to stderr
-            sys.stderr.write("Error Exception {} :{}".format(str(e), line))
+            sys.stderr.write("Error Exception {} :{}\n".format(str(e), Line))
         
     def process_key(self , Key):
         if(self._Key == None):
@@ -62,6 +63,5 @@ class ReducerOutput(object):
 
 reducerOutput = ReducerOutput()
 for line in sys.stdin:
-    line = line.strip()
     reducerOutput.process_line(line)
 reducerOutput.process_output()

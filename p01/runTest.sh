@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # testFile="orders_test.csv"
+# problemNum="1"
 
 # testFile="word_vowels.txt"
 # problemNum="2"
 
-testFile="friends.txt"
-problemNum="3"
+# testFile="friends.txt"
+# problemNum="3"
 
 python_debug="0"
 export python_debug

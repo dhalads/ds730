@@ -152,6 +152,5 @@ class ReducerOutput(object):
 
 reducerOutput = ReducerOutput()
 for line in sys.stdin:
-    line = line.strip()
     reducerOutput.process_line(line)
 reducerOutput.process_output()

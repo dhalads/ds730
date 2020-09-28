@@ -47,7 +47,7 @@ class LineItem(object):
             self._Country = splits[7].strip()
         except Exception as e:
             # Record exception to stderr
-            sys.stderr.write("Error Exception {} :{}\n".format(str(e), line))
+            sys.stderr.write("Error Exception {} :{}\n".format(str(e), Line))
             output = False
         else:
             if(self._InvoiceNo.startswith("C")):
@@ -57,7 +57,7 @@ class LineItem(object):
                 isValidOutput, message = self.isValid()
                 if(not isValidOutput):
                     output = False
-                    sys.stderr.write("Error isValid {} :{}\n".format(message, line))
+                    sys.stderr.write("Error isValid {} :{}\n".format(message, Line))
         return output
 
     def exceptionOnBlank(self, Value):

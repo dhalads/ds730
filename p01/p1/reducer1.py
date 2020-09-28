@@ -24,8 +24,9 @@ class ReducerOutput(object):
         self._Country = None
         self._Data = {}
         
-    def process_line(self, line):
-        key, values = line.split('\t', 1)
+    def process_line(self, Line):
+        Line = Line.strip()
+        key, values = Line.split('\t', 1)
         self.process_key(key)
         self.process_values(values)
         
@@ -85,6 +86,5 @@ class ReducerOutput(object):
 
 reducerOutput = ReducerOutput(None, None, None)
 for line in sys.stdin:
-    line = line.strip()
     reducerOutput.process_line(line)
 reducerOutput.process_output()

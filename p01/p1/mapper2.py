@@ -27,7 +27,7 @@ class MapperOutput(object):
                 print(output)
         except Exception as e:
             # Record exception to stderr
-            sys.stderr.write("Error Exception {} : {} :: {}\n".format(str(e), word, line))
+            sys.stderr.write("Error Exception {} : {} :: {}\n".format(str(e), word, Line))
             output = False
         return output
 
