@@ -2,6 +2,24 @@
  
 import sys
 import os
+from json import loads, dumps
+
+class DS730Base(object):
+    @staticmethod
+    def toStr(Obj):
+        """
+        docstring
+        """
+        className = type(Obj).__name__
+        output = "Start {}({}):\n".format(className, str(id(Obj)))
+        selfdict = vars(Obj)
+        for key in selfdict.keys():
+            value = selfdict.get(key)
+            # print(type(value))
+            # print(isinstance(value, Person))
+            output = output + str(key) + "=" + str(value) + "\n"
+        output = output + "End {}({})".format(className, str(id(Obj)))
+        return output
 
 class Person(object):
 
@@ -9,11 +27,12 @@ class Person(object):
         self._ID = ID
         self._Friends = Friends
         self._FriendIDs = FriendIDs
+        self._SharedContacts = None
         self._MightKnow = None
         self._ProbablyKnow = None
 
     def __str__(self):
-        return str(vars(self))
+        return DS730Base.toStr(self)
 
     def findPotentialContacts(self):
         sharedContacts = {}
@@ -45,10 +64,11 @@ class Person(object):
                 self._ProbablyKnow.append(key)
         self._MightKnow.sort()
         self._ProbablyKnow.sort()
+        self._SharedContacts = sharedContacts
 
     def isFriend(self, ID):
         output = False
-        if(ID in self._FriendIDs):
+        if(ID in self._FriendIDs or ID == self._ID):
             output = True
         return output
 
@@ -61,6 +81,8 @@ class Person(object):
         if(len(self._ProbablyKnow)>0):
             output = output + "Probably(" + ",".join(self._ProbablyKnow) + ")"
         return output
+        
+# End Class Person
 
 
 class ReducerOutput(object):
@@ -73,7 +95,7 @@ class ReducerOutput(object):
         self._Person = Person
 
     def __str__(self):
-        return (str(vars(self))+str(vars(self._Person)))
+        return DS730Base.toStr(self)
 
     def reset(self):
         self._Key = None
@@ -107,6 +129,7 @@ class ReducerOutput(object):
         if(self._Key == personID):
             self._Person._FriendIDs=friendIDs
         else:
+            # add a friend to the Person
             person = Person(personID, None, friendIDs)
             self._Person._Friends.append(person)
 
@@ -122,7 +145,9 @@ class ReducerOutput(object):
         docstring
         """
         self._Key = Key
-        self._Person = Person(Key, [])
+        self._Person = Person(Key, [], [])
+
+# End Class ReducerOutput
 
 
 reducerOutput = ReducerOutput()

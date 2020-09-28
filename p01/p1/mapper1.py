@@ -35,18 +35,19 @@ class LineItem(object):
     def parse_line(self, Line):
         output = True
         try:
-          splits = Line.split(',')
-          self._InvoiceNo = splits[0].strip()
-          self._StockCode = splits[1].strip()
-          self._Description = splits[2].strip()
-          self._Quantity = int(splits[3])
-          self._InvoiceDate = datetime.datetime.strptime(splits[4],"%m/%d/%Y %H:%M") #12/1/2010 8:26
-          self._UnitPrice = float(splits[5])
-          self._CustomerID = splits[6].strip()
-          self._Country = splits[7].strip()
+            Line = Line.strip()
+            splits = Line.split(',')
+            self._InvoiceNo = splits[0].strip()
+            self._StockCode = splits[1].strip()
+            self._Description = splits[2].strip()
+            self._Quantity = int(splits[3])
+            self._InvoiceDate = datetime.datetime.strptime(splits[4],"%m/%d/%Y %H:%M") #12/1/2010 8:26
+            self._UnitPrice = float(splits[5])
+            self._CustomerID = splits[6].strip()
+            self._Country = splits[7].strip()
         except Exception as e:
             # Record exception to stderr
-            sys.stderr.write("Error Exception {} :{}".format(str(e), line))
+            sys.stderr.write("Error Exception {} :{}\n".format(str(e), line))
             output = False
         else:
             if(self._InvoiceNo.startswith("C")):
@@ -56,7 +57,7 @@ class LineItem(object):
                 isValidOutput, message = self.isValid()
                 if(not isValidOutput):
                     output = False
-                    sys.stderr.write("Error isValid {} :{}".format(message, line))
+                    sys.stderr.write("Error isValid {} :{}\n".format(message, line))
         return output
 
     def exceptionOnBlank(self, Value):

@@ -23,7 +23,7 @@ class MapperOutput(object):
                 print("{}\t{}".format(friend, Line))
         except Exception as e:
             # Record exception to stderr
-            sys.stderr.write("Error Exception {} :{}".format(str(e), Line))
+            sys.stderr.write("Error Exception {} :{}\n".format(str(e), Line))
             output = False
         return output
 

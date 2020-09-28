@@ -18,6 +18,7 @@ class MapperOutput(object):
     def parse_line(self, Line):
         output = True
         try:
+            Line = Line.strip()
             words = Line.split(' ')
             for word in words:
                 word = word.strip()
@@ -26,7 +27,7 @@ class MapperOutput(object):
                 print(output)
         except Exception as e:
             # Record exception to stderr
-            sys.stderr.write("Error Exception {} : {} :: {}".format(str(e), word, line))
+            sys.stderr.write("Error Exception {} : {} :: {}\n".format(str(e), word, line))
             output = False
         return output
 
