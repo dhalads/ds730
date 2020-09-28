@@ -45,7 +45,7 @@ class Person(object):
                 count = sharedContacts.get(id)
                 if(count is None):
                     #check number of common friends
-                    count = 0
+                    count = 1
                     for j in range(i+1, num_friends):
                         friendj = self._Friends[j]._FriendIDs
                         if(id in friendj):
