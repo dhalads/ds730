@@ -48,6 +48,7 @@ class LineItem(object):
         except Exception as e:
             # Record exception to stderr
             sys.stderr.write("Error Exception {} :{}\n".format(str(e), Line))
+            sys.stderr.flush()
             output = False
         else:
             if(self._InvoiceNo.startswith("C")):
@@ -58,6 +59,7 @@ class LineItem(object):
                 if(not isValidOutput):
                     output = False
                     sys.stderr.write("Error isValid {} :{}\n".format(message, Line))
+                    sys.stderr.flush()
         return output
 
     def exceptionOnBlank(self, Value):

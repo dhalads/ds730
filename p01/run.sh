@@ -1,14 +1,15 @@
 #!/bin/bash
+problemNum="1"
 
-label="p01p1"
+label="p01p$problemNum"
 
 DATE=$(date +"%Y%m%d%H%M%S")
 testFolder="/user/maria_dev/hadoopTest_$label"
 
 hadoop_cmd="hadoop jar /usr/hdp/2.6.5.0-292/hadoop-mapreduce/hadoop-streaming.jar"
-hadoop_files="-files ./p1/mapper1.py,./p1/reducer1.py"
+hadoop_files="-files ./p1/mapper$problemNum.py,./p1/reducer$problemNum.py"
 hadoop_io="-input $testFolder/wcinput/* -output $testFolder/wcoutput"
-hadoop_map="-mapper mapper1.py -reducer reducer1.py"
+hadoop_map="-mapper mapper$problemNum.py -reducer reducer$problemNum.py"
 
 
 

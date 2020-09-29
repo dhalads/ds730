@@ -110,6 +110,7 @@ class ReducerOutput(object):
         except Exception as e:
             # Record exception to stderr
             sys.stderr.write("Error Exception {} :{}\n".format(str(e), Line))
+            sys.stderr.flush()
         
     def process_key(self , Key):
         if(self._Key == None):
