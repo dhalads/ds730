@@ -1,5 +1,5 @@
 #!/bin/bash
-problemNum="1"
+problemNum="3"
 
 label="p01p$problemNum"
 
