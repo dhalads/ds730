@@ -1,0 +1,4 @@
+-- Of the right-handed batters (column bats , denoted with an R) who were born in
+-- October and died in 2011, which one had the most hits in his career? The
+-- column with the heading of H is the hits column. Do not consider switch hitters
+-- to be right-handed batters.
