@@ -4,7 +4,11 @@
 
 # hdfs://user/maria_dev/pigtest/Master.csv
 
-#aws s3 cp hdfs://user/maria_dev/pigtest/Master.csv s3://halama1668/a03/t4/
+#aws s3 cp Master.csv s3://halama1668/a03/t4/input/
+
+hdfs dfs -copyFromLocal orders.tmp $testFolder/wcinput/orders.csv
+
+hdfs dfs -copyToLocal /user/maria_dev/pigtest/Batting.csv .
 
 
 

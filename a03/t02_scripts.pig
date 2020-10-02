@@ -16,5 +16,5 @@ master_data = FOREACH names GENERATE $0 AS id, $13 AS first, $14 AS last;
 complete_data = JOIN nicer_data BY id, master_data BY id;
 finished = FOREACH complete_data GENERATE $0 AS year, $4 AS first, $5 AS last, $2 AS runs;
 sorted = ORDER finished BY year DESC;
-STORE sorted INTO 'hdfs:/user/maria_dev/pigtest/ baseballsorted ' USING PigStorage(',');
+STORE sorted INTO 'hdfs:/user/maria_dev/pigtest/baseballsorted' USING PigStorage(',');
 DUMP sorted;
