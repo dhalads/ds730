@@ -2,6 +2,8 @@ import shutil
 import sys
 import argparse
 
+#  example:  python makeZip.py ./a03/a3 ./a03/a3 .
+
 def process_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("archiveName", help="archiveName")
