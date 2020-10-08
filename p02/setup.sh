@@ -1,0 +1,1 @@
+hdfs dfs -copyToLocal /user/maria_dev/pigtest/Fielding.csv .
