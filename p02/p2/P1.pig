@@ -41,7 +41,7 @@ batter_data_grouped_by_id = GROUP batter_data BY id;
 best_per_id = FOREACH batter_data_grouped_by_id GENERATE group as id, SUM(batter_data.rbi) AS best;
 
 best_rbi_ranked = RANK best_per_id BY best DESC DENSE;
-rbi_answer = FILTER best_rbi_ranked BY rank_best_per_id==1;
+rbi_answer = FILTER best_rbi_ranked BY rank_best_per_id>=9;
 answer = FILTER player_data BY id==rbi_answer.id;
-answerFinal = FOREACH answer GENERATE id;
+answerFinal = FOREACH answer GENERATE birthCity;
 DUMP answerFinal

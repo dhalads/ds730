@@ -33,3 +33,17 @@ abercda01,1871,TRO,NA,SS,1,,,1,3,2,0,,,,,
 addybo01,1871,RC1,NA,2B,22,,,67,72,42,5,,,,,
 addybo01,1871,RC1,NA,SS,3,,,8,14,7,0,,,,,
 */
+
+players = LOAD 'hdfs:/user/maria_dev/pigtest/Master.csv' using PigStorage(',');
+
+player_data = FOREACH players GENERATE $0 AS id, $13 AS nameFirst, $14 AS nameLast, (int)$17 AS height:int;
+player_data = FILTER player_data BY height>0;
+player_data_grouped = GROUP player_data BY (height);
+data_per_group = FOREACH player_data_grouped GENERATE group as height, COUNT(player_data) AS groupCount;
+
+-- data_ranked = RANK data_per_group BY groupCount ASC DENSE;
+ranked_answer = FILTER data_per_group BY groupCount==1;
+joined_data = JOIN player_data BY (height), ranked_answer BY (height);
+answerFinal = FOREACH joined_data GENERATE CONCAT(player_data::nameFirst, ' ', player_data::nameLast);
+
+DUMP answerFinal

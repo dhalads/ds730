@@ -1,4 +1,5 @@
-Problem 1: (aaronha01)
+Problem 1:
+(aaronha01)
 
 Problem 2:
 (8/1979)
@@ -8,7 +9,12 @@ Problem 2:
 (2/1983)
 
 Problem 3:
+(Eddie Gaedel)
+(Jon Rauch)
+
 Problem 4:
+(NYN)
+
 Problem 5:
 Problem 6:
 Problem 7:
