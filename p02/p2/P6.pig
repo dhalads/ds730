@@ -49,3 +49,30 @@ abercda01,1871,TRO,NA,SS,1,,,1,3,2,0,,,,,
 addybo01,1871,RC1,NA,2B,22,,,67,72,42,5,,,,,
 addybo01,1871,RC1,NA,SS,3,,,8,14,7,0,,,,,
 */
+DEFINE Coalesce datafu.pig.util.Coalesce();
+
+batting = LOAD 'hdfs:/user/maria_dev/pigtest/Batting.csv' using PigStorage(',');
+batting_data = FOREACH batting GENERATE $0 AS playerID, (int)$1 AS yearID:int, (int)$5 AS atBats:int, (int)$7 AS hits:int;
+batting_data = FILTER batting_data BY yearID>=2005 AND yearID<=2009;
+batting_data_grouped = GROUP batting_data BY (playerID);
+batting_data_per_group = FOREACH batting_data_grouped GENERATE group as playerID,  SUM(batting_data.atBats) AS totalBats, SUM(batting_data.hits) AS totalHits;
+batting_data_per_group = FILTER batting_data_per_group BY totalBats >= 40;
+batting_data_per_group = FOREACH batting_data_per_group GENERATE playerID, (float)totalHits/(float)totalBats AS hitRate:float;
+
+fielding = LOAD 'hdfs:/user/maria_dev/pigtest/Fielding.csv' using PigStorage(',');
+fielding = FILTER fielding BY Coalesce($6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) is not null;
+fielding_data = FOREACH fielding GENERATE $0 AS playerID, (int)$1 AS yearID:int, (int)$5 AS games:int, (int)$10 AS errors:int;
+fielding_data = FILTER fielding_data BY yearID >= 2005 AND yearID <= 2009;
+fielding_data_grouped = GROUP fielding_data BY (playerID);
+fielding_data_per_group = FOREACH fielding_data_grouped GENERATE group as playerID,  SUM(fielding_data.games) AS totalGames, SUM(fielding_data.errors) AS totalErrors;
+fielding_data_per_group = FILTER fielding_data_per_group BY totalGames >= 20;
+fielding_data_per_group = FOREACH fielding_data_per_group GENERATE playerID, (float)totalErrors/(float)totalGames AS errorRate:float;
+
+data_join = JOIN batting_data_per_group BY playerID, fielding_data_per_group BY playerID;
+data_join = FOREACH data_join GENERATE batting_data_per_group::playerID as playerID, batting_data_per_group::hitRate - fielding_data_per_group::errorRate AS playerRating ;
+
+data_ranked = RANK data_join BY playerRating DESC;
+ranked_answer = FILTER data_ranked BY rank_data_join<=3;
+answerFinal = FOREACH ranked_answer GENERATE playerID;
+
+DUMP answerFinal;

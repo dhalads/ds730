@@ -33,3 +33,16 @@ abercda01,1871,TRO,NA,SS,1,,,1,3,2,0,,,,,
 addybo01,1871,RC1,NA,2B,22,,,67,72,42,5,,,,,
 addybo01,1871,RC1,NA,SS,3,,,8,14,7,0,,,,,
 */
+
+fielding = LOAD 'hdfs:/user/maria_dev/pigtest/Fielding.csv' using PigStorage(',');
+
+fielding_data = FOREACH fielding GENERATE $0 AS playerID, (int)$1 AS yearID:int, $2 AS teamID, (int)$10 AS errors:int;
+fielding_data = FILTER fielding_data BY yearID > 1950;
+fielding_data_grouped = GROUP fielding_data BY (playerID, teamID);
+data_per_group = FOREACH fielding_data_grouped GENERATE group.playerID as playerID, group.teamID as teamID, SUM(fielding_data.errors) AS totalErrors;
+
+data_ranked = RANK data_per_group BY totalErrors DESC DENSE;
+ranked_answer = FILTER data_ranked BY rank_data_per_group==1;
+answerFinal = FOREACH ranked_answer GENERATE playerID, teamID ;
+
+DUMP answerFinal
