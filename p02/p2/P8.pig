@@ -48,3 +48,26 @@ abercda01,1871,TRO,NA,SS,1,,,1,3,2,0,,,,,
 addybo01,1871,RC1,NA,2B,22,,,67,72,42,5,,,,,
 addybo01,1871,RC1,NA,SS,3,,,8,14,7,0,,,,,
 */
+
+
+DEFINE Coalesce datafu.pig.util.Coalesce();
+
+batting = LOAD 'hdfs:/user/maria_dev/pigtest/Batting.csv' using PigStorage(',');
+batting_data = FOREACH batting GENERATE $0 AS playerID,  Coalesce((int)$5, 0) AS atBats:int, Coalesce((int)$7, 0) AS hits:int;
+
+player = LOAD 'hdfs:/user/maria_dev/pigtest/Master.csv' using PigStorage(',');
+player = FILTER player BY $2 is not null and $5 is not null;
+player_data = FOREACH player GENERATE $0 AS playerID, (int)$2 as birthMonth:int, $5 AS birthState;
+
+data_join = JOIN batting_data BY playerID, player_data BY playerID;
+data_join = FOREACH data_join GENERATE batting_data::playerID as playerID, batting_data::atBats as atBats, batting_data::hits AS hits, player_data::birthMonth as birthMonth, player_data::birthState as birthState;
+data_grouped = GROUP data_join BY (birthMonth, birthState);
+data_grouped = FOREACH data_grouped GENERATE group.birthMonth as birthMonth, group.birthState as birthState,  SUM(data_join.atBats) AS totalAB, SUM(data_join.hits) as totalHits, COUNT(data_join) as groupCount;
+data_grouped = FILTER data_grouped BY totalAB > 1500 and groupCount >= 10;
+data_grouped = FOREACH data_grouped GENERATE birthMonth, birthState, (float)totalHits/(float)totalAB as playerScore:float;
+data_ranked = RANK data_grouped BY playerScore ASC;
+ranked_answer = FILTER data_ranked BY rank_data_grouped<=10;
+-- answerFinal = FOREACH ranked_answer GENERATE CONCAT((chararray)birthMonth, '/', (chararray)birthState);
+answerFinal = FOREACH ranked_answer GENERATE CONCAT((chararray)birthMonth, '/', (chararray)birthState, '/', (chararray)rank_data_grouped, '/', (chararray)playerScore);
+
+DUMP answerFinal;
