@@ -24,5 +24,10 @@ Problem 6:
 (hoppeno01)
 
 Problem 7:
+(Atlanta/GA)
+(Oakland/CA)
+(Oklahoma City/OK)
+(Austin/TX)
+(Utica/NY)
 
 Problem 8:

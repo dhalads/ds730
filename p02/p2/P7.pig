@@ -37,3 +37,23 @@ abercda01,1871,TRO,NA,SS,1,,,1,3,2,0,,,,,
 addybo01,1871,RC1,NA,2B,22,,,67,72,42,5,,,,,
 addybo01,1871,RC1,NA,SS,3,,,8,14,7,0,,,,,
 */
+
+DEFINE Coalesce datafu.pig.util.Coalesce();
+
+batting = LOAD 'hdfs:/user/maria_dev/pigtest/Batting.csv' using PigStorage(',');
+batting_data = FOREACH batting GENERATE $0 AS playerID, (int)$8 AS doubles:int, (int)$9 AS triples:int;
+
+player = LOAD 'hdfs:/user/maria_dev/pigtest/Master.csv' using PigStorage(',');
+player = FILTER player BY Coalesce($5,$6) is not null;
+player_data = FOREACH player GENERATE $0 AS playerID, $5 AS birthState, $6 AS birthCity;
+player_data = FILTER player_data BY SUBSTRING(UPPER(birthCity),0,1) IN ('A', 'E', 'I', 'O', 'U');
+
+data_join = JOIN batting_data BY playerID, player_data BY playerID;
+data_join = FOREACH data_join GENERATE batting_data::playerID as playerID, batting_data::doubles + batting_data::triples AS player2B3B, player_data::birthState as birthState, player_data::birthCity as birthCity;
+data_grouped = GROUP data_join BY (birthCity, birthState);
+data_grouped = FOREACH data_grouped GENERATE group.birthCity as birthCity, group.birthState as birthState,  SUM(data_join.player2B3B) AS total2B3B;
+data_ranked = RANK data_grouped BY total2B3B DESC;
+ranked_answer = FILTER data_ranked BY rank_data_grouped<=5;
+answerFinal = FOREACH ranked_answer GENERATE CONCAT((chararray)birthCity, '/', (chararray)birthState);;
+
+DUMP answerFinal;
