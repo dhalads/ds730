@@ -1,5 +1,9 @@
--- Problem 1
--- Who was the heaviest player (weight) to hit more than 5 triples (3B) in 2005?
+-- Problem 2
+
+-- What player had the most extra base hits during the entire 1980’s (1980 to 1989)? Note
+-- that this question is not asking about any 1 specific year. It is asking about the entire 10
+-- year span in the 80’s. An extra base hit is a double, triple or home run (columns 2B , 3B ,
+-- HR ).
 
 DROP TABLE IF EXISTS batting;
 
@@ -23,16 +27,20 @@ DELIMITED FIELDS TERMINATED BY ',' LOCATION
 '/user/maria_dev/hivetest/master'
 tblproperties ("skip.header.line.count"="1");
 
-Select id
-FROM 
+SELECT id
+FROM
 (
-SELECT id, weight, RANK() OVER (ORDER BY weight
-DESC) AS rankwt FROM master
-WHERE id IN 
-(SELECT id 
-FROM batting
-WHERE
-year=2005 AND triples>5)
-) as T1
-WHERE rankwt=1
+SELECT id, SUM(extraBaseHits) as totalExtra, RANK() OVER (ORDER BY SUM(extraBaseHits) DESC)  AS totalRank
+FROM
+(
+SELECT id, doubles, triples, homeruns, (COALESCE(doubles, 0) + COALESCE(triples,0) + COALESCE(homeruns, 0)) as extraBaseHits
+FROM
+batting
+WHERE year>=1980 AND year<=1989
+-- AND id='youngma01'
+ ) as T1
+GROUP BY id
+) as T2
+WHERE totalRank <=1
 ;
+
