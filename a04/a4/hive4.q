@@ -1,9 +1,8 @@
--- Problem 3
+-- Problem 4
 
--- What player had the most extra base hits during the entire 1980’s (1980 to 1989)? Note
--- that this question is not asking about any 1 specific year. It is asking about the entire 10
--- year span in the 80’s. An extra base hit is a double, triple or home run (columns 2B , 3B ,
--- HR ).
+-- Of the right-handed batters who were born in October and died in 2011, which one had the
+-- most hits in his career? The column with the heading of H is the hits column. Do not
+-- consider switch hitters to be right-handed batters.
 
 DROP TABLE IF EXISTS batting;
 
@@ -28,19 +27,15 @@ DELIMITED FIELDS TERMINATED BY ',' LOCATION
 tblproperties ("skip.header.line.count"="1");
 
 SELECT id
-FROM
+FROM 
 (
-SELECT id, SUM(extraBaseHits) as totalExtra, RANK() OVER (ORDER BY SUM(extraBaseHits) DESC)  AS totalRank
-FROM
-(
-SELECT id, doubles, triples, homeruns, (COALESCE(doubles, 0) + COALESCE(triples,0) + COALESCE(homeruns, 0)) as extraBaseHits
-FROM
-batting
-WHERE year>=1980 AND year<=1989
--- AND id='youngma01'
- ) as T1
-GROUP BY id
-) as T2
-WHERE totalRank <=1
+SELECT master.id AS id, SUM(COALESCE(hits,0)) as totalHits, RANK() OVER (ORDER BY SUM(COALESCE(hits,0)) DESC)  AS rankHits
+FROM 
+master
+JOIN batting ON master.id=batting.id
+WHERE
+bats='R' AND bmonth=10 AND dyear=2011
+GROUP BY master.id ) AS T1
+WHERE rankHits <=1
 ;
 
