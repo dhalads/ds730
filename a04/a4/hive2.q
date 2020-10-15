@@ -28,4 +28,11 @@ STRING, finalgame STRING, retro STRING, bbref STRING) ROW FORMAT
 DELIMITED FIELDS TERMINATED BY ',' LOCATION
 '/user/maria_dev/hivetest/master';
 
-
+SELECT id, year, numTeams, rankNum
+FROM
+(SELECT year, id, count(*) as numTeams, RANK() OVER (ORDER BY count(*) DESC) AS rankNum
+FROM 
+batting
+GROUP BY year, id) as T1
+WHERE rankNum <=3
+;
