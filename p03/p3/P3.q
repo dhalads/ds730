@@ -50,5 +50,5 @@ FROM
 master
 WHERE weight IS NOT NULL
 GROUP BY weight) as T1
-WHERE T1.rankNum <=4
+WHERE T1.rankNum = 2
 ;

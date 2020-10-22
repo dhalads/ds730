@@ -16,26 +16,16 @@ Problem 5:
 longhe01
 
 Problem 6:
-(escobal01)
-(suzukic01)
-(hoppeno01)
+escobal01
+suzukic01
+hoppeno01
 
 Problem 7:
-(Atlanta/GA)
-(Oakland/CA)
-(Oklahoma City/OK)
-(Austin/TX)
-(Utica/NY)
+Los Angeles/CA
+Chicago/IL
+Philadelphia/PA
+St. Louis/MO
+San Francisco/CA
 
-Problem 8: Suspect my answer may not be correct since did not get the correct hint.
-(12/MN)
-
-
-My 7/LA hint was at 6th worst not 4th worst. (birthMonth/birthState,Rank,groupScore,groupCount)
-(12/MN/1/0.16666667/55)
-(6/MN/2/0.19715099/66)
-(7/OR/3/0.19814385/24)
-(7/ME/4/0.19884057/36)
-(2/MN/5/0.2044422/51)
-(7/LA/6/0.20499323/119)
-(10/KY/7/0.21146637/89)
+Problem 8:
+10/San Cristobal
