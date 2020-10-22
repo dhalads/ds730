@@ -43,3 +43,15 @@ INT, wildPitches INT, SB INT, CS INT, ZR INT) ROW FORMAT
 DELIMITED FIELDS TERMINATED BY ',' LOCATION
 '/user/maria_dev/hivetest/fielding'
 tblproperties ("skip.header.line.count"="1");
+
+SELECT bcity
+FROM
+(
+SELECT id, SUM(ab) as totalAB, RANK() OVER (ORDER BY SUM(ab) DESC)  AS abRank
+FROM
+batting
+GROUP BY id
+) as T1
+JOIN master ON T1.id=master.id
+WHERE T1.abRank <=1
+;
