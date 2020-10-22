@@ -42,7 +42,7 @@ DROP TABLE IF EXISTS fielding;
 
 CREATE EXTERNAL TABLE IF NOT EXISTS fielding(id STRING, year INT,
 team STRING, league STRING, position STRING, games INT, GS
-INT, InnOuts INT, assists INT, errors INT, doublePlays INT, passedBall
+INT, InnOuts INT, PO INT, assists INT, errors INT, doublePlays INT, passedBall
 INT, wildPitches INT, SB INT, CS INT, ZR INT) ROW FORMAT
 DELIMITED FIELDS TERMINATED BY ',' LOCATION
 '/user/maria_dev/hivetest/fielding'

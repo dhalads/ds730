@@ -7,14 +7,13 @@ Problem 2:
 8/4
 
 Problem 3:
-(Eddie Gaedel)
-(Jon Rauch)
+185
 
 Problem 4:
-(NYN)
+SDN
 
 Problem 5:
-(russebi01,LAN)
+longhe01
 
 Problem 6:
 (escobal01)
