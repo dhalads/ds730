@@ -29,20 +29,12 @@ public class First {
     }// end method
 
     public static void printPrime(int first, int second) {
-
-    }// end method
-
-    public static void getInputs() {
-        Scanner read = null;
-        String input = null;
-
         try {
-            read = new Scanner(System.in);
-            int number = input.nextInt();
-
+            System.out.println(first + " to " + second);
         } catch (Exception e) {
-            // TODO: handle exception
+            throw e;
         }
+
     }// end method
 
     public static int getValidInt(String message) {
@@ -51,38 +43,44 @@ public class First {
         String input = "";
         Scanner read = null;
         try {
-        read = new Scanner(System.in);
-            while(true && count<10){
-                System.out.print(message);
+            read = new Scanner(System.in);
+            while (true && count < 10) {
+                System.out.print("Type 'q' to quit. " + message);
                 input = read.next();
-                if(input.equals("q"))
-                count = count +1;
-            }//end while
+                if (input.equals("q")) {
+                    System.exit(1);
+                } else {
+                    try {
+                        output = Integer.parseInt(input);
+                        if (output <= 0) {
+                            System.out.println(output + " is not greater than zero.");
+                            continue;
+                        } else {
+                            break;
+                        }//end if
+                    } catch (Exception e) {
+                        System.out.println("'" + input + "' will parse to int.");
+                        continue;
+                    }//end try catch
+                }//end if
+                count = count + 1;
+            } // end while
+            read.close();
         } catch (Exception e) {
-            //TODO: handle exception
-        }
-        
+            System.out.println("Exception:" + e.getMessage());
+        } finally {
+            read.close();
+        } // end try-catch-finally
         return output;
-    }
+    }// end method
 
     public static void main(String args[]) {
-        System.out.print("Enter first integer greater than zero: ");
-        Scanner input = new Scanner(System.in);
-        int number = input.nextInt();
-        boolean output = false;
-        // if statement checks if the number was less than 0
-        // else if checks if the number was 0
-        // else is everything else, i.e. it was positive
-        if (number >= 0) {
-            output = isPrime(number);
-            System.out.println(number + " :Number is prime:" + output);
+        System.out.println("Compute primes between two integers greater than zero.");
+        int int1 = First.getValidInt("Enter first integer:");
+        int int2 = First.getValidInt("Enter second integer:");
 
-        } else if (number == 0) {
-            System.out.println("Reenter integer greatr than zero. Type q to quit.");
-        } else {
-            System.out.println("Number was positive.");
-        }
-        input.close();
+        First.printPrime(int1, int2);
+
     }
 
 }
