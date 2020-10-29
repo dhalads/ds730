@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "CodeLens (Launch) - First",
+            "request": "launch",
+            "mainClass": "a05.a5.First",
+            "projectName": "ds730_85fe71ff"
+        },
+        {
             "type": "bashdb",
             "request": "launch",
             "name": "Bash-Debug (select script from list of sh files)",
@@ -27,7 +34,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": [],
-            "cwd":"${fileDirname}"
+            "cwd": "${fileDirname}"
         }
     ]
 }
