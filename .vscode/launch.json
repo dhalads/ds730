@@ -6,6 +6,28 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Index",
+            "request": "launch",
+            "mainClass": "Index",
+            "projectName": "ds730_85fe71ff",
+            "args": "~/ds730_local/ProjSamples/input NotSet 100"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "ds730_85fe71ff"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - First",
+            "request": "launch",
+            "mainClass": "First",
+            "projectName": "ds730_85fe71ff"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - First",
             "request": "launch",
             "mainClass": "a05.a5.First",
