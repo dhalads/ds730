@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "Index",
             "projectName": "ds730_85fe71ff",
-            "args": "~/ds730_local/ProjSamples/input NotSet 100"
+            "args": "./p04/input NotSet 10"
         },
         {
             "type": "java",

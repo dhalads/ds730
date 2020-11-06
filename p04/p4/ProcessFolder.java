@@ -1,17 +1,13 @@
+import java.util.ArrayList;
 import java.util.Objects;
+import java.io.File;
 
 public class ProcessFolder {
     String inputFolder = null;
     String outputFolder = null;
     int pageSize = 0;
-    String searchPattern = null;
-
-    public ProcessFolder(String inputFolder, String outputFolder, int pageSize, String searchPattern) {
-        this.inputFolder = inputFolder;
-        this.outputFolder = outputFolder;
-        this.pageSize = pageSize;
-        this.searchPattern = searchPattern;
-    }
+    String searchPattern = "";
+    ArrayList<File> files = null;
 
     public ProcessFolder searchPattern(String searchPattern) {
         this.searchPattern = searchPattern;
@@ -25,7 +21,6 @@ public class ProcessFolder {
     public void setSearchPattern(String searchPattern) {
         this.searchPattern = searchPattern;
     }
-
 
     public ProcessFolder() {
     }
@@ -83,7 +78,8 @@ public class ProcessFolder {
             return false;
         }
         ProcessFolder processFolder = (ProcessFolder) o;
-        return Objects.equals(inputFolder, processFolder.inputFolder) && Objects.equals(outputFolder, processFolder.outputFolder) && pageSize == processFolder.pageSize;
+        return Objects.equals(inputFolder, processFolder.inputFolder)
+                && Objects.equals(outputFolder, processFolder.outputFolder) && pageSize == processFolder.pageSize;
     }
 
     @Override
@@ -93,13 +89,31 @@ public class ProcessFolder {
 
     @Override
     public String toString() {
-        return "{" +
-            " inputFolder='" + getInputFolder() + "'" +
-            ", outputFolder='" + getOutputFolder() + "'" +
-            ", pageSize='" + getPageSize() + "'" +
-            "}";
+        return "{" + " inputFolder='" + getInputFolder() + "'" + ", outputFolder='" + getOutputFolder() + "'"
+                + ", pageSize='" + getPageSize() + "'" + "}";
     }
 
+    public void process() {
+        File myFile = null;
+        ProcessFile pf = null;
+        try {
+            
+            this.files = Index.listFilesForFolder(new File(this.getInputFolder()), false, this.searchPattern);
+            for (int i = 0; i < this.files.size(); ++i) {
+                myFile = this.files.get(i);
+                pf = new ProcessFile();
+                pf.setFile(myFile);
+                pf.setOutputFolder(this.getOutputFolder());
+                pf.setPageSize(this.getPageSize());
+                pf.process();
 
-    
-}//end class
+
+            }//end for
+
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+    }
+
+}// end class

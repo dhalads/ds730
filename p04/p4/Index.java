@@ -1,4 +1,6 @@
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -7,11 +9,19 @@ public class Index {
         String inputFolder = null;
         String outputFolder = null;
         int pageSize = 0;
+        ProcessFolder pf = null;
         try {
+            Path path = FileSystems.getDefault().getPath(".").toAbsolutePath();
+            System.out.println("path=" + path);
             inputFolder = args[0].trim();
             outputFolder = args[1].trim();
             pageSize = Integer.parseInt(args[2].trim());
-            listFilesForFolder2(new File(inputFolder));
+            pf = new ProcessFolder();
+            pf.setInputFolder(inputFolder);
+            pf.setOutputFolder(outputFolder);
+            pf.setPageSize(pageSize);
+            pf.process();
+            
         } catch (Exception e) {
             System.err.println(e.getMessage());
             // TODO: handle exception
