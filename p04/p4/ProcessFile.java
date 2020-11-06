@@ -1,14 +1,16 @@
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.io.File;
+import java.io.FileWriter;
 
-public class ProcessFile {
+public class ProcessFile extends Thread{
 
     File file = null;
     String outputFolder = null;
     int pageSize = 0;
-    
+
     int pageNumber = 1;
     int pageCharCount = 0;
     TreeMap<String, String> output = new TreeMap<>();
@@ -61,7 +63,7 @@ public class ProcessFile {
         return this;
     }
 
-    public void process() {
+    public void run() {
         Scanner myReader = null;
         String line = null;
         try {
@@ -69,58 +71,96 @@ public class ProcessFile {
             myReader = new Scanner(this.getFile());
             while (myReader.hasNextLine()) {
                 line = myReader.nextLine();
-                System.out.println(line);
+                // System.out.println(line);
                 this.processLine(line);
             }
+            this.processOutput();
             myReader.close();
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
+        } finally {
             myReader.close();
         }
-        System.out.println(output);
-    }//end method
+        // System.out.println(output);
+    }// end method
 
-    public void processLine(String line){
+    public void processLine(String line) {
         Scanner myLine = null;
         String word = null;
         try {
             line = line.trim();
             myLine = new Scanner(line);
-            while(myLine.hasNext()){
+            while (myLine.hasNext()) {
                 word = myLine.next();
-                //System.out.println(word);
+                // System.out.println(word);
                 processWord(word);
             }
 
-
         } catch (Exception e) {
-            //TODO: handle exception
+            // TODO: handle exception
             e.printStackTrace();
         }
     }
 
-    public void processWord(String word){
+    public void processWord(String word) {
         int length = 0;
         String indexes = null;
+        String[] splitIndexes = null;
+        String pageNumberString = null;
         try {
             word = word.trim();
+            word = word.toLowerCase();
             length = word.length();
-            if(this.pageCharCount + length > this.getPageSize()){
+            if (this.pageCharCount + length > this.getPageSize()) {
                 this.pageNumber = this.pageNumber + 1;
                 this.pageCharCount = 0;
-            }//end if
+            } // end if
             indexes = output.get(word);
-            if(indexes == null){
-                output.put(word, Integer.toString(this.pageNumber));
+            pageNumberString = Integer.toString(this.pageNumber);
+            if (indexes == null) {
+                output.put(word, pageNumberString);
             } else {
-                indexes = indexes + ", " + Integer.toString(this.pageNumber);
-                output.put(word, indexes);
+                splitIndexes = indexes.split(",");
+                if (!splitIndexes[splitIndexes.length - 1].equals(pageNumberString)) {
+                    indexes = indexes + ", " + pageNumberString;
+                    output.put(word, indexes);
+                }
             }
             this.pageCharCount = this.pageCharCount + length;
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void processOutput() {
+        FileWriter myWriter = null;
+        String filename = null;
+        String writeLine = null;
+        int periodIndex = -1;
+        try {
+            filename = this.getFile().getName();
+            periodIndex = filename.lastIndexOf(".");
+            if (periodIndex > 0) {
+                filename = filename.substring(0, periodIndex) + "_output" + filename.substring(periodIndex);
+            } else {
+                filename = filename + "_output.txt";
+            }
+            filename = this.outputFolder + "/" + filename;
+            myWriter = new FileWriter(filename);
+            for (Entry<String, String> entry : output.entrySet()) {
+                writeLine = entry.getKey() + " " + entry.getValue() + "\n";
+                myWriter.write(writeLine);
+            }
+            myWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                myWriter.close();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
         }
     }
 

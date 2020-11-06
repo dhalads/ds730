@@ -8,6 +8,7 @@ public class ProcessFolder {
     int pageSize = 0;
     String searchPattern = "";
     ArrayList<File> files = null;
+    boolean useThreads = false;
 
     public ProcessFolder searchPattern(String searchPattern) {
         this.searchPattern = searchPattern;
@@ -96,8 +97,11 @@ public class ProcessFolder {
     public void process() {
         File myFile = null;
         ProcessFile pf = null;
+        long start = 0;
+        long end = 0;
+        ArrayList<Thread> threadList = new ArrayList<>();
         try {
-            
+            start = System.currentTimeMillis();
             this.files = Index.listFilesForFolder(new File(this.getInputFolder()), false, this.searchPattern);
             for (int i = 0; i < this.files.size(); ++i) {
                 myFile = this.files.get(i);
@@ -105,11 +109,23 @@ public class ProcessFolder {
                 pf.setFile(myFile);
                 pf.setOutputFolder(this.getOutputFolder());
                 pf.setPageSize(this.getPageSize());
-                pf.process();
+                threadList.add(pf);
+                if (useThreads) {
+                    pf.start();
+                } else {
+                    pf.run();
+                }
+            } // end for
+            if (useThreads) {
+                for (Thread mt : threadList) {
+                    if (mt.isAlive()) {
+                        mt.join(); // make sure to wait for all threads to finish
+                    }
+                }
+            }
 
-
-            }//end for
-
+            end = System.currentTimeMillis();
+            System.out.println(end - start);
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();

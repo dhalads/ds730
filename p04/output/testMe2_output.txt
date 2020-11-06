@@ -1,0 +1,10 @@
+. 6
+david 1, 7
+fun. 3
+halama 2
+home-again 5
+is 2
+isn't 3
+it 4
+next. 6
+ok 6
