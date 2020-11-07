@@ -16,7 +16,7 @@ public class ProcessFile extends Thread {
     int pageNumber = 1;
     int pageCharCount = 0;
     TreeMap<String, StringBuffer> output = new TreeMap<>();
-    TreeMap<String, TreeSet<Integer>> output2 = new TreeMap<>();
+    TreeMap<String, TreeSet<Integer>> output2 = new TreeMap<String, TreeSet<Integer>>();
 
     public ProcessFile() {
     }
@@ -154,11 +154,11 @@ public class ProcessFile extends Thread {
             //for output2
             indexes2 = output2.get(word);
             if (indexes2 == null) {
-                indexes2 = new TreeSet<>();
+                indexes2 = new TreeSet<Integer>();
                 indexes2.add(this.pageNumber);
                 output2.put(word, indexes2);
             } else {
-                if (!indexes2.contains(this.pageNumber)) {
+                if (! indexes2.contains(this.pageNumber)) {
                     indexes2.add(this.pageNumber);
                     output2.put(word, indexes2);
                 }
