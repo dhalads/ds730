@@ -20,6 +20,8 @@ public class Index {
             pf.setInputFolder(inputFolder);
             pf.setOutputFolder(outputFolder);
             pf.setPageSize(pageSize);
+            pf.setUseThreads(false);
+            pf.setUseSingleFileOutput(false);
             pf.process();
             
         } catch (Exception e) {

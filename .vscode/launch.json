@@ -12,6 +12,7 @@
             "projectName": "ds730_85fe71ff",
             "args": "~/ds730_local/ProjSamples/input ./p04/output 1000"
             // "args": "./p04/input ./p04/output 10"
+            ,"vmArgs": "-Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.port=55555 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
         },
         {
             "type": "java",

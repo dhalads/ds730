@@ -1,19 +1,22 @@
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.io.File;
 import java.io.FileWriter;
 
-public class ProcessFile extends Thread{
+public class ProcessFile extends Thread {
 
     File file = null;
     String outputFolder = null;
     int pageSize = 0;
+    boolean useSinglePageOutput = false;
 
     int pageNumber = 1;
     int pageCharCount = 0;
-    TreeMap<String, String> output = new TreeMap<>();
+    TreeMap<String, StringBuffer> output = new TreeMap<>();
+    TreeMap<String, TreeSet<Integer>> output2 = new TreeMap<>();
 
     public ProcessFile() {
     }
@@ -22,6 +25,14 @@ public class ProcessFile extends Thread{
         this.file = file;
         this.outputFolder = outputFolder;
         this.pageSize = pageSize;
+    }
+
+    public boolean isUseSinglePageOutput() {
+        return this.useSinglePageOutput;
+    }
+
+    public void setUseSinglePageOutput(boolean useSinglePageOutput) {
+        this.useSinglePageOutput = useSinglePageOutput;
     }
 
     public File getFile() {
@@ -66,22 +77,32 @@ public class ProcessFile extends Thread{
     public void run() {
         Scanner myReader = null;
         String line = null;
+        long start = 0;
+        long end = 0;
+        long startOutput = 0;
+        long endOutput = 0;
         try {
-
+            start = System.currentTimeMillis();
             myReader = new Scanner(this.getFile());
             while (myReader.hasNextLine()) {
                 line = myReader.nextLine();
                 // System.out.println(line);
                 this.processLine(line);
             }
-            this.processOutput();
+            if (!this.isUseSinglePageOutput()) {
+                startOutput = System.currentTimeMillis();
+                this.processOutput();
+                endOutput = System.currentTimeMillis();
+            }
+            System.out.println(this.getFile().getName() + " output:" + (endOutput - startOutput));
             myReader.close();
+            end = System.currentTimeMillis();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             myReader.close();
         }
-        // System.out.println(output);
+        System.out.println(this.getFile().getName() + ":" + (end - start));
     }// end method
 
     public void processLine(String line) {
@@ -104,8 +125,9 @@ public class ProcessFile extends Thread{
 
     public void processWord(String word) {
         int length = 0;
-        String indexes = null;
-        String[] splitIndexes = null;
+        StringBuffer indexes = null;
+        TreeSet<Integer> indexes2 = null;
+        int splitIndexes = -1;
         String pageNumberString = null;
         try {
             word = word.trim();
@@ -115,17 +137,34 @@ public class ProcessFile extends Thread{
                 this.pageNumber = this.pageNumber + 1;
                 this.pageCharCount = 0;
             } // end if
-            indexes = output.get(word);
-            pageNumberString = Integer.toString(this.pageNumber);
-            if (indexes == null) {
-                output.put(word, pageNumberString);
+            //for output
+            // indexes = output.get(word);
+            // pageNumberString = Integer.toString(this.pageNumber);
+            // if (indexes == null) {
+            //     indexes = new StringBuffer();
+            //     indexes.append(pageNumberString);
+            //     output.put(word, indexes);
+            // } else {
+            //     splitIndexes = indexes.lastIndexOf(",");
+            //     if (!splitIndexes[splitIndexes.length - 1].equals(pageNumberString)) {
+            //         indexes = indexes + ", " + pageNumberString;
+            //         output.put(word, indexes);
+            //     }
+            // }
+            //for output2
+            indexes2 = output2.get(word);
+            if (indexes2 == null) {
+                indexes2 = new TreeSet<>();
+                indexes2.add(this.pageNumber);
+                output2.put(word, indexes2);
             } else {
-                splitIndexes = indexes.split(",");
-                if (!splitIndexes[splitIndexes.length - 1].equals(pageNumberString)) {
-                    indexes = indexes + ", " + pageNumberString;
-                    output.put(word, indexes);
+                if (!indexes2.contains(this.pageNumber)) {
+                    indexes2.add(this.pageNumber);
+                    output2.put(word, indexes2);
                 }
             }
+
+
             this.pageCharCount = this.pageCharCount + length;
 
         } catch (Exception e) {
@@ -138,6 +177,7 @@ public class ProcessFile extends Thread{
         String filename = null;
         String writeLine = null;
         int periodIndex = -1;
+        StringBuffer value = null;
         try {
             filename = this.getFile().getName();
             periodIndex = filename.lastIndexOf(".");
@@ -148,8 +188,22 @@ public class ProcessFile extends Thread{
             }
             filename = this.outputFolder + "/" + filename;
             myWriter = new FileWriter(filename);
-            for (Entry<String, String> entry : output.entrySet()) {
-                writeLine = entry.getKey() + " " + entry.getValue() + "\n";
+            // for (Entry<String, String> entry : output.entrySet()) {
+            //     writeLine = entry.getKey() + " " + entry.getValue() + "\n";
+            //     myWriter.write(writeLine);
+            // }
+            for (Entry<String, TreeSet<Integer>> entry : output2.entrySet()) {
+                value = new StringBuffer();
+                for(Integer intValue: entry.getValue()){
+                    if(value.length()>0){
+                        value.append(", ");
+                        value.append(intValue.toString());
+                    }else{
+                        value.append(intValue.toString());
+                    }
+                }
+                
+                writeLine = entry.getKey() + " " + value.toString() + "\n";
                 myWriter.write(writeLine);
             }
             myWriter.close();
