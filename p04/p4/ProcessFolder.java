@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -11,7 +12,7 @@ public class ProcessFolder {
     String inputFolder = null;
     String outputFolder = null;
     int pageSize = 0;
-    String searchPattern = "";
+    String searchPattern = ".*\\.txt$";
     ArrayList<File> files = null;
     boolean useThreads = false;
     boolean useSingleFileOutput = false;
@@ -165,6 +166,7 @@ public class ProcessFolder {
         try {
             start = System.currentTimeMillis();
             this.files = ProcessFolder.listFilesForFolder(new File(this.getInputFolder()), false, this.searchPattern);
+            Collections.sort(this.files);
             for (int i = 0; i < this.files.size(); ++i) {
                 myFile = this.files.get(i);
                 pf = new ProcessFile();

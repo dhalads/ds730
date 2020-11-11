@@ -1,5 +1,3 @@
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 
 public class GlobalRunner {
     public static void main(String args[]) throws InterruptedException {
@@ -8,8 +6,6 @@ public class GlobalRunner {
         int pageSize = 0;
         ProcessFolder pf = null;
         try {
-            Path path = FileSystems.getDefault().getPath(".").toAbsolutePath();
-            System.out.println("path=" + path);
             inputFolder = args[0].trim();
             outputFolder = args[1].trim();
             pageSize = Integer.parseInt(args[2].trim());
