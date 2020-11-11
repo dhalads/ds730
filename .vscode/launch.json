@@ -33,7 +33,7 @@
             "request": "launch",
             "mainClass": "Index",
             "projectName": "ds730_85fe71ff",
-            "args": "./p04/input ./p04/output 10",
+            "args": "~/ds730_local/ProjSamples/input ./p04/output 10",
             "vmArgs": "-Djava.rmi.server.hostname=172.18.10.209 -Dcom.sun.management.jmxremote.port=8080 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=true"
         },
         {

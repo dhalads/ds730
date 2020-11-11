@@ -15,8 +15,7 @@ public class ProcessFile extends Thread {
 
     int pageNumber = 1;
     int pageCharCount = 0;
-    TreeMap<String, StringBuffer> output = new TreeMap<>();
-    TreeMap<String, TreeSet<Integer>> output2 = new TreeMap<String, TreeSet<Integer>>();
+   TreeMap<String, TreeSet<Integer>> output = new TreeMap<String, TreeSet<Integer>>();
 
     public ProcessFile() {
     }
@@ -94,7 +93,7 @@ public class ProcessFile extends Thread {
                 this.processOutput();
                 endOutput = System.currentTimeMillis();
             }
-            System.out.println(this.getFile().getName() + " output:" + (endOutput - startOutput));
+            //System.out.println(this.getFile().getName() + " output:" + (endOutput - startOutput));
             myReader.close();
             end = System.currentTimeMillis();
         } catch (Exception e) {
@@ -102,7 +101,7 @@ public class ProcessFile extends Thread {
         } finally {
             myReader.close();
         }
-        System.out.println(this.getFile().getName() + ":" + (end - start));
+        //System.out.println(this.getFile().getName() + ":" + (end - start));
     }// end method
 
     public void processLine(String line) {
@@ -118,17 +117,13 @@ public class ProcessFile extends Thread {
             }
 
         } catch (Exception e) {
-            // TODO: handle exception
             e.printStackTrace();
         }
     }
 
     public void processWord(String word) {
         int length = 0;
-        StringBuffer indexes = null;
-        TreeSet<Integer> indexes2 = null;
-        int splitIndexes = -1;
-        String pageNumberString = null;
+        TreeSet<Integer> indexes = null;
         try {
             word = word.trim();
             word = word.toLowerCase();
@@ -137,30 +132,16 @@ public class ProcessFile extends Thread {
                 this.pageNumber = this.pageNumber + 1;
                 this.pageCharCount = 0;
             } // end if
-            //for output
-            // indexes = output.get(word);
-            // pageNumberString = Integer.toString(this.pageNumber);
-            // if (indexes == null) {
-            //     indexes = new StringBuffer();
-            //     indexes.append(pageNumberString);
-            //     output.put(word, indexes);
-            // } else {
-            //     splitIndexes = indexes.lastIndexOf(",");
-            //     if (!splitIndexes[splitIndexes.length - 1].equals(pageNumberString)) {
-            //         indexes = indexes + ", " + pageNumberString;
-            //         output.put(word, indexes);
-            //     }
-            // }
             //for output2
-            indexes2 = output2.get(word);
-            if (indexes2 == null) {
-                indexes2 = new TreeSet<Integer>();
-                indexes2.add(this.pageNumber);
-                output2.put(word, indexes2);
+            indexes = output.get(word);
+            if (indexes == null) {
+                indexes = new TreeSet<Integer>();
+                indexes.add(this.pageNumber);
+                output.put(word, indexes);
             } else {
-                if (! indexes2.contains(this.pageNumber)) {
-                    indexes2.add(this.pageNumber);
-                    output2.put(word, indexes2);
+                if (! indexes.contains(this.pageNumber)) {
+                    indexes.add(this.pageNumber);
+                    output.put(word, indexes);
                 }
             }
 
@@ -188,11 +169,7 @@ public class ProcessFile extends Thread {
             }
             filename = this.outputFolder + "/" + filename;
             myWriter = new FileWriter(filename);
-            // for (Entry<String, String> entry : output.entrySet()) {
-            //     writeLine = entry.getKey() + " " + entry.getValue() + "\n";
-            //     myWriter.write(writeLine);
-            // }
-            for (Entry<String, TreeSet<Integer>> entry : output2.entrySet()) {
+            for (Entry<String, TreeSet<Integer>> entry : output.entrySet()) {
                 value = new StringBuffer();
                 for(Integer intValue: entry.getValue()){
                     if(value.length()>0){
@@ -213,7 +190,7 @@ public class ProcessFile extends Thread {
             try {
                 myWriter.close();
             } catch (Exception e) {
-                // TODO: handle exception
+                //Do Nothing
             }
         }
     }

@@ -23,7 +23,6 @@ public class IndexRunner {
             
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            // TODO: handle exception
         } // end try-catch
 
     }// end main

@@ -3,6 +3,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import java.io.File;
 import java.io.FileWriter;
 
@@ -117,6 +118,44 @@ public class ProcessFolder {
                 + ", pageSize='" + getPageSize() + "'" + "}";
     }
 
+    public static ArrayList<File> listFilesForFolder(final File folder, final boolean recursivity,
+            final String patternFileFilter) {
+
+        // Inputs
+        boolean filteredFile = false;
+
+        // Ouput
+        final ArrayList<File> output = new ArrayList<File>();
+
+        // Foreach elements
+        for (final File fileEntry : folder.listFiles()) {
+
+            // If this element is a directory, do it recursivly
+            if (fileEntry.isDirectory()) {
+                if (recursivity) {
+                    output.addAll(listFilesForFolder(fileEntry, recursivity, patternFileFilter));
+                }
+            } else {
+                // If there is no pattern, the file is correct
+                if (patternFileFilter.length() == 0) {
+                    filteredFile = true;
+                }
+                // Otherwise we need to filter by pattern
+                else {
+                    filteredFile = Pattern.matches(patternFileFilter, fileEntry.getName());
+                }
+
+                // If the file has a name which match with the pattern, then add it to the list
+                if (filteredFile) {
+                    output.add(fileEntry);
+                }
+            }
+        }
+
+        return output;
+    }
+
+
     public void process() {
         File myFile = null;
         ProcessFile pf = null;
@@ -125,7 +164,7 @@ public class ProcessFolder {
         ArrayList<ProcessFile> workers = new ArrayList<>();
         try {
             start = System.currentTimeMillis();
-            this.files = Index.listFilesForFolder(new File(this.getInputFolder()), false, this.searchPattern);
+            this.files = ProcessFolder.listFilesForFolder(new File(this.getInputFolder()), false, this.searchPattern);
             for (int i = 0; i < this.files.size(); ++i) {
                 myFile = this.files.get(i);
                 pf = new ProcessFile();
@@ -155,7 +194,6 @@ public class ProcessFolder {
             end = System.currentTimeMillis();
             System.out.println(end - start);
         } catch (Exception e) {
-            // TODO: handle exception
             e.printStackTrace();
         }
     }
@@ -169,7 +207,7 @@ public class ProcessFolder {
         try {
             for (int i = 0; i < numWorkers; ++i) {
                 pf = workers.get(i);
-                for (Map.Entry<String, TreeSet<Integer>> entry : pf.output2.entrySet()) {
+                for (Map.Entry<String, TreeSet<Integer>> entry : pf.output.entrySet()) {
                     word = entry.getKey();
                     value = entry.getValue();
                     index = this.output.get(word);
@@ -250,7 +288,7 @@ public class ProcessFolder {
             try {
                 myWriter.close();
             } catch (Exception e) {
-                // TODO: handle exception
+                //do nothing
             }
         }
 
