@@ -27,9 +27,7 @@ total_amount: Double)
 
 import org.apache.spark.sql._
 
-val taxi_ds: Dataset[TaxiRides] = spark.sqlContext.read.option("header",
-"true").option("delimiter", ",").option("inferSchema",
-"true").csv("/user/zeppelin/taxi_test.csv").as[TaxiRides]
+val taxi_ds: Dataset[TaxiRides] = spark.sqlContext.read.option("header","true").option("delimiter", ",").option("inferSchema","true").csv("/user/zeppelin/taxi_test.csv").as[TaxiRides]
 
 taxi_ds.show(50)
 taxi_ds.show(40, false)

@@ -6,8 +6,7 @@ taxi.printSchema()
 taxi.select($"passenger_count", $"tip_amount").show()
 taxi.filter($"passenger_count" > 5).show()
 
-taxi.filter($"passenger_count" > 5).filter($"tip_amount" >
-10).select($"passenger_count", $"tip_amount").show()
+taxi.filter($"passenger_count" > 5).filter($"tip_amount" > 10).select($"passenger_count", $"tip_amount").show()
 
 taxi.groupBy($"passenger_count").avg("tip_amount").show()
 
