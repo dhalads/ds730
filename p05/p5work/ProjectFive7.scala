@@ -1,0 +1,33 @@
+//Problem 7
+
+/*
+(30 pts) Imagine that you work in NYC. You are considering working for a
+ride-sharing company to make a few extra dollars later in the evening. However,
+you don't have that much time to spend driving other people around. You realize
+you have 60 minutes that you can drive between 4:00:00pm and 11:00:00pm1.
+You have determined that any total_amount that is over $200 is not going to be
+possible so those ought to be filtered out. You want to maximize the amount of
+money you could earn so you want to find the best 60 minute period between
+4:00:00pm and 11:00:00pm, inclusive, to drive. You do not care about days. In
+other words, a ride that starts at 9:45:13pm on June 12th is in the same 60
+minute timeslot as a ride that starts at 9:45:13pm on August 15th.
+Your goal is this, find the 60 minute time slot where you maximize the average
+(mean) total_amount. You are only considering rides starting (i.e.
+tpep_pickup_datetime) between 4:00:00pm and 11:00:00pm (you do not care
+when those rides finish) and only rides that are $200 or less. Your answer should
+go down to the second. In other words, your answer should be something similar
+to 9:47:15pm - 10:47:14pm2. Your entire 60 minute time slot must be between
+4:00:00pm and 11:00:00pm, again, inclusive. Your answer should not go outside
+of these boundaries. Be sure that your code outputs your answer as a full 60
+minute timeslot like this: 6:36:29pm - 7:36:28pm.
+*/
+
+/*
+VendorID,tpep_pickup_datetime,tpep_dropoff_datetime,passenger_count,trip_distance,RatecodeID,store_and_fwd_flag,PULocationID,DOLocationID,payment_type,fare_amount,extra,mta_tax,tip_amount,tolls_amount,improvement_surcharge,total_amount
+2,11/21/2018 07:20:05 PM,11/21/2018 07:21:49 PM,1,0.38,1,N,142,142,1,3.5,1,0.5,1.06,0,0.3,6.36
+2,11/21/2018 07:17:42 PM,11/21/2018 07:24:37 PM,1,1.38,1,N,166,151,2,7,1,0.5,0,0,0.3,8.8
+1,11/21/2018 07:07:19 PM,11/21/2018 07:34:31 PM,1,5,1,N,136,182,2,20,1,0.5,0,0,0.3,21.8
+1,11/21/2018 07:12:45 PM,11/21/2018 07:16:51 PM,1,0.8,1,N,158,90,2,5,1,0.5,0,0,0.3,6.8
+1,11/21/2018 07:17:59 PM,11/21/2018 07:29:29 PM,0,1.4,1,N,48,142,2,9,1,0.5,0,0,0.3,10.8
+*/
+

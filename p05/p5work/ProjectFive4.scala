@@ -23,7 +23,7 @@ VendorID,tpep_pickup_datetime,tpep_dropoff_datetime,passenger_count,trip_distanc
 val taxi = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/zeppelin/taxi/taxi2018.csv").select($"tpep_pickup_datetime", $"trip_distance", $"fare_amount")
 
 val withTollsPaid = taxi.filter(col("trip_distance")>0 && col("fare_amount")>0).filter((col("fare_amount")/col("trip_distance"))<10000).withColumn("month", 
-    month(to_date($"tpep_pickup_datetime", "MM/dd/yyyy HH:mm"))
+    month(to_date($"tpep_pickup_datetime", "MM/dd/yyyy hh:mm:ss a"))
     // month(unix_timestamp($"tpep_pickup_datetime", "MM/dd/yyyy HH:mm"))
     // month(col("tpep_pickup_datetime"))
     )
