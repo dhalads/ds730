@@ -31,3 +31,54 @@ VendorID,tpep_pickup_datetime,tpep_dropoff_datetime,passenger_count,trip_distanc
 1,11/21/2018 07:17:59 PM,11/21/2018 07:29:29 PM,0,1.4,1,N,48,142,2,9,1,0.5,0,0,0.3,10.8
 */
 
+val taxi = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/zeppelin/taxi/taxi2018.csv").select($"tpep_pickup_datetime", $"total_amount")
+
+val withExtra = taxi.filter(col("total_amount")<=200).withColumn("pickup_timestamp", 
+    to_timestamp($"tpep_pickup_datetime", "MM/dd/yyyy hh:mm:ss a")
+    ).withColumn("pickup_hour", 
+    hour(col("pickup_timestamp"))
+    ).withColumn("pickup_minute", 
+    minute(col("pickup_timestamp"))
+    ).withColumn("pickup_second", 
+    second(col("pickup_timestamp"))
+    ).filter(col("pickup_hour")>=16 && col("pickup_minute")>=0 && col("pickup_minute")>=0 && col("pickup_hour")<=22 && col("pickup_minute")<=0 && col("pickup_minute")<=0
+    ).withColumn("unix_timestamp", 
+    unix_timestamp($"tpep_pickup_datetime", "MM/dd/yyyy hh:mm:ss a")
+    ).withColumn("window_start", 
+    from_unixtime($"unix_timestamp", "hh:mm:ss a")
+    ).withColumn("window_end", 
+    from_unixtime($"unix_timestamp"+3600, "hh:mm:ss a")
+    ).withColumn("timeslot", 
+    concat(col("window_start"),lit(" - "),col("window_end"))
+    )
+
+withExtra.printSchema()
+// withExtra.createOrReplaceTempView("taxiView")
+
+// val output = spark.sqlContext.sql("SELECT tpep_pickup_datetime, pickup_timestamp FROM taxiView LIMIT 50")
+// output.show()
+
+// Save file local folder, delimiter by default is ,
+// df.coalesce(1).write.option("header", "true").csv("sample_file.csv")
+withExtra.coalesce(1).write.format("csv").option("header","true").mode("overwrite").option("sep",",").save("file:///home/maria_dev/ds730_local/zepplin/test_output2.csv")
+
+// Save file to HDFS
+// df.write.format('csv').option('header',True).mode('overwrite').option('sep','|').save('/output.csv')
+
+import org.apache.spark.sql.expressions._
+
+val windowSpec = Window.orderBy("unix_timestamp").rangeBetween(0,3600)
+val windowSpec2 = Window.orderBy($"mean_total".desc)
+
+
+val withExtra2 = withExtra.withColumn("mean_total", avg(withExtra("total_amount")).over(windowSpec)).withColumn("dense_rank", dense_rank().over(windowSpec2))
+
+
+withExtra2.show()
+
+withExtra2.coalesce(1).write.format("csv").option("header","true").mode("overwrite").option("sep",",").save("/user/zeppelin/p5_output")
+
+val answer = withExtra2.filter($"dense_rank" <= 1).select($"timeslot")
+answer.show(false)
+// answer.collect()
+

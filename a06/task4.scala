@@ -1,6 +1,6 @@
 //task4
 
-reset:
+// reset:
 sc.setLogLevel("WARN")
 
 val taxi = spark.read.format("csv").option("header", true).option("inferSchema", true).load("/user/zeppelin/taxi_test.csv")
