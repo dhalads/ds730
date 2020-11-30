@@ -41,44 +41,50 @@ val withExtra = taxi.filter(col("total_amount")<=200).withColumn("pickup_timesta
     minute(col("pickup_timestamp"))
     ).withColumn("pickup_second", 
     second(col("pickup_timestamp"))
-    ).filter(col("pickup_hour")>=16 && col("pickup_minute")>=0 && col("pickup_minute")>=0 && col("pickup_hour")<=22 && col("pickup_minute")<=0 && col("pickup_minute")<=0
-    ).withColumn("unix_timestamp", 
-    unix_timestamp($"tpep_pickup_datetime", "MM/dd/yyyy hh:mm:ss a")
-    ).withColumn("window_start", 
-    from_unixtime($"unix_timestamp", "hh:mm:ss a")
-    ).withColumn("window_end", 
-    from_unixtime($"unix_timestamp"+3600, "hh:mm:ss a")
-    ).withColumn("timeslot", 
-    concat(col("window_start"),lit(" - "),col("window_end"))
+    ).withColumn("totalSeconds",
+    col("pickup_hour")*3600 +col("pickup_minute")*60 + col("pickup_second")
+    ).filter(col("totalSeconds")>=16*3600+0*60+0
     )
-
+ 
 withExtra.printSchema()
-// withExtra.createOrReplaceTempView("taxiView")
+withExtra.show(false)
 
-// val output = spark.sqlContext.sql("SELECT tpep_pickup_datetime, pickup_timestamp FROM taxiView LIMIT 50")
-// output.show()
 
 // Save file local folder, delimiter by default is ,
 // df.coalesce(1).write.option("header", "true").csv("sample_file.csv")
-withExtra.coalesce(1).write.format("csv").option("header","true").mode("overwrite").option("sep",",").save("file:///home/maria_dev/ds730_local/zepplin/test_output2.csv")
+// withExtra.coalesce(1).write.format("csv").option("header","true").mode("overwrite").option("sep",",").save("file:///home/maria_dev/ds730_local/zepplin/test_output2.csv")
 
 // Save file to HDFS
 // df.write.format('csv').option('header',True).mode('overwrite').option('sep','|').save('/output.csv')
 
 import org.apache.spark.sql.expressions._
 
-val windowSpec = Window.orderBy("unix_timestamp").rangeBetween(0,3600)
+val windowSpec = Window.orderBy("totalSeconds").rangeBetween(0,3600)
 val windowSpec2 = Window.orderBy($"mean_total".desc)
 
 
-val withExtra2 = withExtra.withColumn("mean_total", avg(withExtra("total_amount")).over(windowSpec)).withColumn("dense_rank", dense_rank().over(windowSpec2))
+val withExtra2 = withExtra.withColumn("mean_total", avg(withExtra("total_amount")).over(windowSpec)).filter(col("totalSeconds")<=23*3600+0*60+0
+    ).withColumn("dense_rank", rank().over(windowSpec2))
+withExtra2.show(false)
 
+// withExtra2.coalesce(1).write.format("csv").option("header","true").mode("overwrite").option("sep",",").save("/user/zeppelin/p5_output")
 
-withExtra2.show()
+val answer = withExtra2.filter($"dense_rank" <= 1).withColumn("window_start", 
+    from_unixtime($"totalSeconds", "hh:mm:ss a")
+    ).withColumn("window_end", 
+    from_unixtime($"totalSeconds"+3600, "hh:mm:ss a")
+    ).withColumn("timeslot", 
+    concat(col("window_start"),lit(" - "),col("window_end"))
+    )
 
-withExtra2.coalesce(1).write.format("csv").option("header","true").mode("overwrite").option("sep",",").save("/user/zeppelin/p5_output")
-
-val answer = withExtra2.filter($"dense_rank" <= 1).select($"timeslot")
 answer.show(false)
-// answer.collect()
+
+val answer2 = answer.select("timeslot").distinct
+
+answer2.show(false)
+
+// val startSeconds = 16*3600 to 22*3600 toDF
+// val join1 = startSeconds.join(withExtra, $"value"===$"totalSeconds", "right")
+// join1.filter($"value" === null).show(false)
+
 

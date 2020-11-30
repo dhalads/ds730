@@ -29,4 +29,4 @@ val withPassengerGroup = taxi.filter(col("passenger_count")>0).withColumn("passe
 withPassengerGroup.createOrReplaceTempView("taxiView")
 
 val output = spark.sqlContext.sql("SELECT passengerGroup, COUNT(*) AS tripCount FROM taxiView GROUP BY passengerGroup")
-output.show()
+output.show(false)

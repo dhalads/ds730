@@ -22,14 +22,6 @@ VendorID,tpep_pickup_datetime,tpep_dropoff_datetime,passenger_count,trip_distanc
 
 
 val taxi = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/zeppelin/taxi/taxi2018.csv")
-// .select($"tpep_pickup_datetime", $"tpep_dropoff_datetime", $"trip_distance")
-
-// val withExtra = taxi.filter(col("trip_distance")>0).withColumn("duration",
-//     (unix_timestamp($"tpep_dropoff_datetime", "MM/dd/yyyy hh:mm:ss a") - unix_timestamp($"tpep_pickup_datetime", "MM/dd/yyyy hh:mm:ss a"))
-//     ).withColumn(
-//     "durationPerDistance", 
-//     (unix_timestamp($"tpep_dropoff_datetime", "MM/dd/yyyy hh:mm:ss a") - unix_timestamp($"tpep_pickup_datetime", "MM/dd/yyyy hh:mm:ss a"))/col("trip_distance")
-//     )
 
 val withExtra = taxi.filter(col("trip_distance")>0).withColumn(
     "durationPerDistance", 
@@ -38,6 +30,5 @@ val withExtra = taxi.filter(col("trip_distance")>0).withColumn(
 
 withExtra.createOrReplaceTempView("taxiView")
 
-// val output = spark.sqlContext.sql("SELECT tpep_dropoff_datetime AS tpep_dropoff_datetimexxxxxxxxxx,tpep_pickup_datetime AS tpep_pickup_datetimexxxxxxxxxx, trip_distance, duration, durationPerDistance FROM taxiView ORDER BY durationPerDistance DESC")
 val output = spark.sqlContext.sql("SELECT * FROM taxiView ORDER BY durationPerDistance DESC LIMIT 10")
 output.show(false)

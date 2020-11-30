@@ -26,4 +26,4 @@ val withTollsPaid = taxi.filter(col("passenger_count")>0).withColumn("tollsPaid"
 withTollsPaid.createOrReplaceTempView("taxiView")
 
 val output = spark.sqlContext.sql("SELECT tollsPaid, AVG(trip_distance) AS avgDistance FROM taxiView GROUP BY tollsPaid")
-output.show()
+output.show(false)

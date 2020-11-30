@@ -22,14 +22,10 @@ VendorID,tpep_pickup_datetime,tpep_dropoff_datetime,passenger_count,trip_distanc
 val taxi = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/zeppelin/taxi/taxi2018.csv").select($"tpep_dropoff_datetime", $"payment_type", $"fare_amount", $"tip_amount")
 
 val withExtra = taxi.filter(col("payment_type")===1).withColumn("AM_or_PM", 
-    // amPmFormat.format(to_date($"tpep_dropoff_datetime", "MM/dd/yyyy hh:mm:ss a"))
-    // date_format(to_date($"tpep_dropoff_datetime", "MM/dd/yyyy hh:mm:ss a"), "a")
-    // date_format(to_date($"tpep_dropoff_datetime"), "a")
-    from_unixtime(unix_timestamp($"tpep_dropoff_datetime", "MM/dd/yyyy hh:mm:ss a"), "a")
-    // month(col("tpep_dropoff_datetime"))
-    )
+     from_unixtime(unix_timestamp($"tpep_dropoff_datetime", "MM/dd/yyyy hh:mm:ss a"), "a")
+   )
 
 withExtra.createOrReplaceTempView("taxiView")
 
-val output = spark.sqlContext.sql("SELECT AM_or_PM, (sum(tip_amount)/sum(fare_amount)) AS ratioTipToFare, COUNT(*) as dayCount FROM taxiView GROUP BY AM_or_PM")
-output.show()
+val output = spark.sqlContext.sql("SELECT AM_or_PM, (sum(tip_amount)/sum(fare_amount)) AS ratioTipToFare FROM taxiView GROUP BY AM_or_PM")
+output.show(false)
