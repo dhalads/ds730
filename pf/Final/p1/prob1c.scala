@@ -16,12 +16,35 @@ Year,Month,Day,TimeCST,TemperatureF,Dew PointF,Humidity,Sea Level PressureIn,Vis
 2000,1,1,3:53 AM,34,28.9,82,29.96,10,Calm,Calm,-,N/A,,Clear,0
 2000,1,1,4:53 AM,28.9,26.1,89,29.97,10,Calm,Calm,-,N/A,,Partly Cloudy,0
 */
+import org.apache.spark.sql.expressions._
 
 val weatherW = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/final/Oshkosh/OshkoshWeather.csv"
     ).filter($"TemperatureF" > -100 ).select("Year", "Month", "Day", "TemperatureF")
 
-val weatherI = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/final/IowaCity/IowaCityWeather.csv"
-    ).filter($"TemperatureF" > -100 ).select("Year", "Month", "Day", "TemperatureF")
+val extraW = weatherW.withColumn("dateString", 
+    concat($"Year", format_string("%02d", $"Month"), format_string("%02d", $"Day") )
+    ).withColumn("totalSeconds", 
+    unix_timestamp($"dateString", "yyyyMMdd")
+    ).withColumn("dateInt", 
+    $"dateString" cast "Int"
+    )
 
+val windowSpec = Window.orderBy("totalSeconds").rangeBetween(0,3600*24*7-1)
+val windowSpec2 = Window.orderBy($"mean_temp".desc)
 
+val extraW2 = extraW.withColumn("mean_temp", avg(extraW("TemperatureF")).over(windowSpec)
+    // ).filter(col("totalSeconds")<=23*3600+0*60+0
+    ).withColumn("dense_rank", rank().over(windowSpec2))
+
+extraW2.show(false)
+
+// Used to check answer
+// extraW.filter($"dateInt" >= 20120630 && $"dateInt" <= 20120706).agg(avg("TemperatureF")).show()
+
+val answer = extraW2.filter($"dense_rank" <=1).limit(1).withColumn("start",
+    from_unixtime($"totalSeconds", "MMM dd, yyyy")
+).withColumn("end",
+    from_unixtime($"totalSeconds"+3600*24*7-1, "MMM dd, yyyy")
+).select("start", "end", "mean_temp")
+answer.show()
 
