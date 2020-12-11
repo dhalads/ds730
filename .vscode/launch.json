@@ -6,6 +6,28 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Output",
+            "request": "launch",
+            "mainClass": "Output",
+            "projectName": "ds730_85fe71ff"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - EnumCombinations",
+            "request": "launch",
+            "mainClass": "EnumCombinations",
+            "projectName": "ds730_85fe71ff"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - FinalRunner",
+            "request": "launch",
+            "mainClass": "FinalRunner",
+            "projectName": "ds730_85fe71ff",
+            "cwd": "${fileDirname}"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - GlobalRunner",
             "request": "launch",
             "mainClass": "GlobalRunner",
