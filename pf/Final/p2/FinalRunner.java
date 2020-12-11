@@ -23,6 +23,7 @@ public class FinalRunner {
             output.run();
             Shared.finish();
             end = System.currentTimeMillis();
+            Shared.outputToFile();
             Shared.printOutput();            
             System.out.println("FinalRunner " + Shared.file + " time:" + (end - start));
 

@@ -1,3 +1,4 @@
+import java.io.FileWriter;
 import java.lang.invoke.StringConcatFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +9,9 @@ public class Shared {
 
     /*
      * 
-     * file="filename" : input file. default is input2.txt 
-     * MTT="1" : use MultiThread true or false, default is yes
-     * NumMT="8" : max thread in thread pool, default is 8
-     * DPart="1" , what data level to split for MTT, default is 1
+     * file="filename" : input file. default is input2.txt MTT="1" : use MultiThread
+     * true or false, default is yes NumMT="8" : max thread in thread pool, default
+     * is 8 DPart="1" , what data level to split for MTT, default is 1
      * 
      */
     public static String file = "input2.txt";
@@ -19,7 +19,7 @@ public class Shared {
     public static int NumMT = 8;
     public static int DPart = 1;
 
-    public static ExecutorService executor = null ;
+    public static ExecutorService executor = null;
 
     public static Input input = null;
     public static Output output = null;
@@ -108,14 +108,40 @@ public class Shared {
     // }
 
     public static void printOutput() {
+        String line = null;
         try {
-            printRoutes(minRoutes);
+            System.out.println("Number of route with minimum time=" + minRoutes.size());
+            line = routeToString(minRoutes.get(0));
+            System.out.println("example route: " + line);
             System.out.println("mintime=" + minTime);
-            System.out.println("num minRoutes=" + minRoutes.size());
             System.out.println("solutionsChecked=" + solutionsChecked);
             System.out.println("numOutputs=" + numOutputs);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+    }
+
+    public static void outputToFile() {
+        FileWriter myWriter = null;
+        String filename = null;
+        String line = null;
+        try {
+            filename = "output2.txt";
+            myWriter = new FileWriter(filename);
+            for (int i = 0; i < minRoutes.size(); ++i) {
+                line = routeToString(minRoutes.get(i));
+                myWriter.write(line + "\n");
+            }
+            myWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                myWriter.close();
+            } catch (Exception e) {
+                // do nothing
+            }
         }
 
     }
@@ -159,5 +185,38 @@ public class Shared {
             e.printStackTrace();
         }
     }
+
+    public static String routeToString(List<Integer> route) {
+        int time = 0;
+        StringBuffer routeString = null;
+        StringBuffer timeString = null;
+        int currentStop = 0;
+        int nextStop = 0;
+        int addTime = 0;
+        String output = null;
+        try {
+            routeString = new StringBuffer();
+            timeString = new StringBuffer();
+            routeString.append(Shared.input.BldgNames.get(currentStop));
+            for (int i = 1; i < route.size(); ++i) {
+                nextStop = route.get(i);
+                addTime = Shared.input.RouteTimes[currentStop][nextStop];
+                time = time + addTime;
+                routeString.append(" ").append(Shared.input.BldgNames.get(nextStop));
+                timeString.append(addTime).append("+");
+                currentStop = nextStop;
+            } // end for
+            addTime = Shared.input.RouteTimes[currentStop][0];
+            time = time + addTime;
+            routeString.append(" ").append(Shared.input.BldgNames.get(0));
+            timeString.append(addTime).append("=").append(time);
+            // System.out.println(routeString.toString() + " : " + timeString.toString());
+            routeString.append(" ").append(time);
+            output = routeString.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return output;
+    }// end method
 
 }// end class
