@@ -24,7 +24,8 @@
             "request": "launch",
             "mainClass": "FinalRunner",
             "projectName": "ds730_85fe71ff",
-            "cwd": "${fileDirname}"
+            "cwd": "${fileDirname}",
+            "args": "../../FinalWork/p2/input13.txt"
         },
         {
             "type": "java",

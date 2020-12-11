@@ -2,15 +2,31 @@ public class FinalRunner {
     public static void main(String args[]) throws InterruptedException {
         Input input = null;
         Output output = null;
+        long start = 0;
+        long end = 0;
+        String inputFile = null;
         try {
+            if (args.length > 0) {
+                inputFile = args[0].trim();
+            } else {
+                inputFile = "input2.txt";
+            }//end if
+
+            start = System.currentTimeMillis();
             input = new Input();
-            input.load();            
+            input.file = inputFile;
+            input.load();
+            Shared.input = input;
             System.out.println(input.BldgNames.toString());
             System.out.println(input.RouteTimes.toString());
             output = new Output();
-            output.setPInput(input);
+            output.prefix = Shared.input.getPrefix();
+            output.inventory = Shared.input.getInventory();
+            output.enableMultiThread = false;
             output.run();
-
+            Shared.printOutput();
+            end = System.currentTimeMillis();
+            System.out.println("FinalRunner " + inputFile + " time:" + (end - start));
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
