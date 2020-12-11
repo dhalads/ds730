@@ -22,10 +22,12 @@ public class FinalRunner {
             output = new Output();
             output.prefix = Shared.input.getPrefix();
             output.inventory = Shared.input.getInventory();
-            output.enableMultiThread = false;
+            output.enableMultiThread = true;
+            output.partLevel = 1;
             output.run();
-            Shared.printOutput();
+            Shared.finish();
             end = System.currentTimeMillis();
+            Shared.printOutput();            
             System.out.println("FinalRunner " + inputFile + " time:" + (end - start));
 
         } catch (Exception e) {

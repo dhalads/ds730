@@ -32,13 +32,20 @@ public class Shared {
         }
     }// end method
 
-    public static void printOutput() {
+    public static void finish(){
         try {
             for (Output pft : workers) {
                 if (pft.isAlive()) {
                     pft.join(); // make sure to wait for all threads to finish
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void printOutput() {
+        try {            
             printRoutes(minRoutes);
             System.out.println("mintime=" + minTime);
             System.out.println("num minRoutes=" + minRoutes.size());
