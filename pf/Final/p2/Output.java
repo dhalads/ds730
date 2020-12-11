@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Output  extends Thread{
+public class Output  implements Runnable{
 
     List<List<Integer>> minRoutes = new ArrayList<>();
     public int minTime = -1;
@@ -106,8 +106,9 @@ public class Output  extends Thread{
                     partOutput.prefix = p;
                     partOutput.inventory = r;
                     partOutput.enableMultiThread = false;
-                    Shared.workers.add(partOutput);
-                    partOutput.start();
+                    // Shared.workers.add(partOutput);
+                    // partOutput.start();
+                    Shared.executor.execute(partOutput);
                 }else{
                     getItemCombinations(p, r, container);
                 }
