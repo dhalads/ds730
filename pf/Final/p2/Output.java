@@ -56,6 +56,35 @@ public class Output {
         }
     }
 
+    public void printRoute(List<Integer> route) {
+        int time = 0;
+        StringBuffer routeString = null;
+        StringBuffer timeString = null;
+        int currentStop = 0;
+        int nextStop = 0;
+        int addTime = 0;
+        try {
+            routeString = new StringBuffer();
+            timeString = new StringBuffer();
+            routeString.append(currentStop);
+            for (int i = 1; i < route.size(); ++i) {
+                nextStop = route.get(i);
+                addTime = this.PInput.RouteTimes[currentStop][nextStop];
+                time = time + addTime;
+                routeString.append("->").append(nextStop);
+                timeString.append(addTime).append("+");
+                currentStop = nextStop;
+            } // end for
+            addTime = this.PInput.RouteTimes[currentStop][0];
+            time = time + addTime;
+            routeString.append("->").append(0);
+            timeString.append(addTime).append("=").append(time);
+            System.out.println(routeString.toString() + " : " + timeString.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static List<List<Integer>> getItemCombinations(List<Integer> prefix, List<Integer> inventory) {
         List<List<Integer>> container = new ArrayList<>();
         List<Integer> remainder;

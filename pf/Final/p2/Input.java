@@ -25,7 +25,7 @@ public class Input {
         try {
             this.BldgNames = new HashMap<Integer, String>();
             start = System.currentTimeMillis();
-            myReader = new Scanner(new File("input2.txt"));
+            myReader = new Scanner(new File("input11.txt"));
             while (myReader.hasNextLine()) {
                 line = myReader.nextLine();
                 // System.out.println(line);
