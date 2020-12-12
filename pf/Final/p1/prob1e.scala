@@ -32,9 +32,17 @@ val weatherW = spark.read.format("csv").option("header", true).option("inferSche
     ).filter($"TemperatureF" > -100 ).select("Year", "Month", "Day","TimeCST", "TemperatureF")
 
 val weatherI = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/final/IowaCity/IowaCityWeather.csv"
-    ).filter($"TemperatureF" > -100 ).select("Year", "Month", "Day", "TemperatureF")
+    ).filter($"TemperatureF" > -100 ).select("Year", "Month", "Day","TimeCST", "TemperatureF")
 
 val extraW = weatherW.withColumn("dateString", 
+    concat($"Year", lit("-"), format_string("%02d", $"Month"), lit("-"), format_string("%02d", $"Day"), lit(" "), $"TimeCST"  )
+    ).withColumn("totalSeconds", 
+    unix_timestamp($"dateString", "yyyy-MM-dd h:mm a")
+    ).withColumn("Hour", 
+    from_unixtime($"totalSeconds","HH") cast "Int"
+    )
+
+val extraI = weatherI.withColumn("dateString", 
     concat($"Year", lit("-"), format_string("%02d", $"Month"), lit("-"), format_string("%02d", $"Day"), lit(" "), $"TimeCST"  )
     ).withColumn("totalSeconds", 
     unix_timestamp($"dateString", "yyyy-MM-dd h:mm a")
@@ -49,11 +57,19 @@ val extraW2 = extraW.withColumn("min_temp", min(extraW("TemperatureF")).over(win
 ).withColumn("max_temp", max(extraW("TemperatureF")).over(windowSpec)
 ).withColumn("temp_diff", $"max_temp" - $"min_temp")
 
+val extraI2 = extraI.withColumn("min_temp", min(extraI("TemperatureF")).over(windowSpec)
+).withColumn("max_temp", max(extraI("TemperatureF")).over(windowSpec)
+).withColumn("temp_diff", $"max_temp" - $"min_temp")
+
 extraW2.show(false)
-
 val answerW = extraW2.orderBy($"temp_diff".desc).limit(1)
+// val seconds24 = answerW.select("totalSeconds").map(r => r.getLong(0)).collect.toList
+val answerW2 = extraW2.filter($"totalSeconds" >= seconds24(0) && $"totalSeconds" <= seconds24(0) + 60*60*24-1).orderBy("totalSeconds")
+val answerW3 = answerW2.filter($"TemperatureF" === 39.2 || $"TemperatureF" === -11.9)
+answerW3.show(50, false)
 
-val seconds24 = answerW.select("totalSeconds").map(r => r.getLong(0)).collect.toList
-
-val answerW2 = extraW2.filter($"totalSeconds" >= seconds24(0) && $"totalSeconds" <= seconds24(0) + 60*60*24-1).orderBy("TemperatureF")
-answerW2.show(50, false)
+extraI2.show(false)
+val answerI = extraI2.orderBy($"temp_diff".desc).limit(1)
+val answerI2 = extraI2.filter($"totalSeconds" >= seconds24(0) && $"totalSeconds" <= seconds24(0) + 60*60*24-1).orderBy("totalSeconds")
+val answerI3 = answerI2.filter($"TemperatureF" === 35.1 || $"TemperatureF" === -0.9)
+answerI3.show(50, false)
