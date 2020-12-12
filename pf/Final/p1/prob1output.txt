@@ -53,6 +53,22 @@ Iowa City Data
 +----+-----+---+--------+------------+-------------------+------------+----+--------+--------+---------+
 
 Problem 1f:
-
+Best time and city to run for each month.
++-----+----+---------+                                                          
+|Month|Hour|City     |
++-----+----+---------+
+|1    |14  |Iowa City|
+|2    |14  |Iowa City|
+|3    |14  |Iowa City|
+|4    |22  |Iowa City|
+|5    |5   |Oshkosh  |
+|6    |5   |Oshkosh  |
+|7    |5   |Oshkosh  |
+|8    |5   |Oshkosh  |
+|9    |5   |Iowa City|
+|10   |19  |Oshkosh  |
+|11   |13  |Iowa City|
+|12   |14  |Iowa City|
++-----+----+---------+
 
 

@@ -22,7 +22,33 @@ Year,Month,Day,TimeCST,TemperatureF,Dew PointF,Humidity,Sea Level PressureIn,Vis
 import org.apache.spark.sql.expressions._
 
 val weatherW = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/final/Oshkosh/OshkoshWeather.csv"
-    ).filter($"TemperatureF" > -100 ).select("Year", "Month", "Day","TimeCST", "TemperatureF")
+    ).filter($"TemperatureF" > -100 ).select(
+    "Year", "Month", "Day","TimeCST","TemperatureF","Wind SpeedMPH").withColumn("City", lit("Oshkosh"))
 
 val weatherI = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/final/IowaCity/IowaCityWeather.csv"
-    ).filter($"TemperatureF" > -100 ).select("Year", "Month", "Day", "TemperatureF")
+    ).filter($"TemperatureF" > -100 ).select(
+    "Year", "Month", "Day","TimeCST","TemperatureF","Wind SpeedMPH").withColumn("City", lit("Iowa City"))
+
+val merge = weatherW.union(weatherI).withColumn("dateString", 
+    concat($"Year", lit("-"), format_string("%02d", $"Month"), lit("-"), format_string("%02d", $"Day"), lit(" "), $"TimeCST"  )
+    ).withColumn("totalSeconds", 
+    unix_timestamp($"dateString", "yyyy-MM-dd h:mm a")
+    ).withColumn("Hour", 
+    from_unixtime($"totalSeconds","HH") cast "Int"
+    )
+
+mergeW.count()
+
+val merge2 = merge.groupBy("City", "Month", "Hour" ).agg(avg($"TemperatureF").as("avgTemp")).withColumn("diffFrom50",
+    abs($"avgTemp" - 50)
+    )
+
+val windowSpec = Window.partitionBy("Month").orderBy("diffFrom50")
+
+val merge3 = merge2.withColumn(
+    "dense_rank", dense_rank().over(windowSpec)
+    ).filter($"dense_rank" <= 1).orderBy("Month")
+
+val answer = merge3.select("Month", "Hour", "City")
+
+answer.show(false)
