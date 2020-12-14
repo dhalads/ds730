@@ -1,0 +1,41 @@
+Problem 3
+
+a. Where you obtained your data. A link to the data is sufficient. Please do
+not upload many GB’s of data to the dropbox.
+
+    Weather data from https://registry.opendata.aws/noaa-gsod/
+    Downloaded using - aws s3 cp s3://aws-gsod/2011/725060-94728.csv . --no-sign-request
+    Chose the data from 2011 because is was complete for each day. I would have liked to get hourly data versus daily data.
+    The data file is for a weather station located in central park, New York City.
+
+    Taxi trip data from https://registry.opendata.aws/nyc-tlc-trip-records-pds/
+    Downloaded using aws - s3 cp s3:"//nyc-tlc/trip data/yellow_tripdata_2011-06.csv" . --no-sign-request
+    Chose this dataset because it is large, 2.6GB per month of in 2011. Chose 2011 data because the weather data was complete for that year.
+
+
+b. The questions that you asked of your data in a reasonable format (e.g. a
+Word document).
+
+    How is NY taxi usage different between days it rains and days that does not rain?
+
+    trips/day
+    mean passenger count
+    mean fare
+    mean tip to fare ratio
+
+
+c. The answers to the questions in a reasonable format.
+
+    The answer below is for only one month of taxi data 2011-06
+    +---------------+-----------------+------------------+------------------+-------------------+
+    |Rain_or_Drizzle|      tripsPerDay|          meanPass|          meanFare|       tipFareRatio|
+    +---------------+-----------------+------------------+------------------+-------------------+
+    |              1|504487.2727272727|1.6618756036732163|10.428642445255202|0.09558045416001584|
+    |              0|489987.5263157895|1.6660656130558855|10.381674532423947|0.09365293207675451|
+    +---------------+-----------------+------------------+------------------+-------------------+
+    tripsPerDay % change - 
+
+
+d. The code you used to obtain your answers.
+
+    See file. prob3d.scala
