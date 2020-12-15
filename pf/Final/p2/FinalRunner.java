@@ -13,8 +13,8 @@ public class FinalRunner {
             input.file = Shared.file;
             input.load();
             Shared.input = input;
-            System.out.println(input.BldgNames.toString());
-            System.out.println(input.RouteTimes.toString());
+            System.out.println("Buildings loaded: " + input.BldgNames.toString());
+            // System.out.println(input.RouteTimes.toString());
             output = new Output();
             output.prefix = Shared.input.getPrefix();
             output.inventory = Shared.input.getInventory();

@@ -15,17 +15,12 @@ public class Input {
     public void load() {
         Scanner myReader = null;
         String line = null;
-        long start = 0;
-        long end = 0;
-        long startOutput = 0;
-        long endOutput = 0;
         String[] bldg = null;
         String[] routeTimes = null;
         int bldgCount = 0;
         int numBuildings = 0;
         try {
             this.BldgNames = new HashMap<Integer, String>();
-            start = System.currentTimeMillis();
             myReader = new Scanner(new File(file));
             while (myReader.hasNextLine()) {
                 line = myReader.nextLine();
@@ -47,10 +42,7 @@ public class Input {
                 } // end for
                 bldgCount = bldgCount + 1;
             } // end while
-            System.out.println(" output:" + (endOutput - startOutput));
             myReader.close();
-            end = System.currentTimeMillis();
-            System.out.println(" output:" + (end - start));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

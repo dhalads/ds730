@@ -9,9 +9,10 @@ public class Shared {
 
     /*
      * 
-     * file="filename" : input file. default is input2.txt MTT="1" : use MultiThread
-     * true or false, default is yes NumMT="8" : max thread in thread pool, default
-     * is 8 DPart="1" , what data level to split for MTT, default is 1
+     * file="filename" : input file. default is input2.txt 
+     * MTT="1" : use MultiThread true or false, default is true 
+     * NumMT="8" : max thread in thread pool, default is 8 
+     * DPart="1" , what data level to split for MTT, default is 1
      * 
      */
     public static String file = "input2.txt";
@@ -53,6 +54,10 @@ public class Shared {
                         throw new Exception("Failed to parse " + arg);
                     }
                 } // end for
+                System.out.println("Input file. file=" + Shared.file);
+                System.out.println("Enable multithread. MTT=" + Shared.MTT);
+                System.out.println("Number of threads to use. NumMT=" + Shared.NumMT);
+                System.out.println("Data partition level. DPart=" + Shared.DPart);
             } else {
                 System.out.println("No arguments passed!");
             }
@@ -95,18 +100,6 @@ public class Shared {
         }
     }
 
-    // public static void finish(){
-    // try {
-    // for (Output pft : workers) {
-    // if (pft.isAlive()) {
-    // pft.join(); // make sure to wait for all threads to finish
-    // }
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
-
     public static void printOutput() {
         String line = null;
         try {
@@ -115,7 +108,7 @@ public class Shared {
             System.out.println("example route: " + line);
             System.out.println("mintime=" + minTime);
             System.out.println("solutionsChecked=" + solutionsChecked);
-            System.out.println("numOutputs=" + numOutputs);
+            System.out.println("Number data partitions used. numOutputs=" + numOutputs);
         } catch (Exception e) {
             e.printStackTrace();
         }
