@@ -33,7 +33,14 @@ c. The answers to the questions in a reasonable format.
     |              1|504487.2727272727|1.6618756036732163|10.428642445255202|0.09558045416001584|
     |              0|489987.5263157895|1.6660656130558855|10.381674532423947|0.09365293207675451|
     +---------------+-----------------+------------------+------------------+-------------------+
-    tripsPerDay % change - 
+    % change over days with no rain:
+    tripsPerDay : 3
+    meanPass : -0.25 
+    meanFare : 0.39
+    tipFareRatio : 2
+
+    Conclusion: When it rains trips per day go up and tips go up.
+    
 
 
 d. The code you used to obtain your answers.

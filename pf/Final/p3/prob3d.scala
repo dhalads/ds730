@@ -40,7 +40,7 @@ val weather = spark.read.format("csv").option("header", true).option("inferSchem
     )
 
 
-val taxi = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/finalp3/yellow_tripdata_2011-06.csv"
+val taxi = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/finalp3/taxi_test.csv"
     ).filter($"passenger_count" >= 1 && $"fare_amount" > 0
     ).select("pickup_datetime", "passenger_count", "fare_amount","tip_amount", "total_amount"
     ).withColumn("timestamp", 
@@ -49,20 +49,7 @@ val taxi = spark.read.format("csv").option("header", true).option("inferSchema",
     to_date($"pickup_datetime", "yyyy-MM-dd HH:mm:ss")
     )
 
-    weather.printSchema()
-    taxi.printSchema()
-
-
-    weather.select("Precip_Flag").distinct().show()
-
-    weather.select("Precipitation").agg(min("Precipitation").as("minPrecip"), mean("Precipitation").as("meanPrecip"), max("Precipitation").as("maxPrecip")).show(20,false)
-
-weather.show()
-taxi.show()
-
 val join = taxi.alias("a").join(weather.alias("b"), "Date")
-
-join.show()
 
 val agg1 = join.groupBy("Rain_or_Drizzle").agg(
     count("Date").as("numberTrips"),
@@ -71,25 +58,25 @@ val agg1 = join.groupBy("Rain_or_Drizzle").agg(
     (sum("tip_amount")/sum("fare_amount")).as("tipFareRatio")
     )
 
-    // val agg1 = join.groupBy("Rain_or_Drizzle").agg(
-    // count("Date").as("numberTrips"),
-    // min("passenger_count").as("minPass"),mean("passenger_count").as("meanPass"),stddev("passenger_count").as("stddevPass"),max("passenger_count").as("maxPass"),
-    // min("fare_amount").as("minFare"),mean("fare_amount").as("meanFare"),stddev("fare_amount").as("stddevFare"),max("fare_amount").as("maxFare"),
-    // (sum("tip_amount")/sum("fare_amount")).as("tipFareRatio2"),
-    // min("tipFareRatio").as("minTFR"),mean("tipFareRatio").as("meanTFR"),stddev("tipFareRatio").as("stddevTFR"),max("tipFareRatio").as("maxTFR")
-    // )
-
-    
-
-    answer.show()
-
-    weather.count()
-    weather.filter($"Mean_Temp" >= 32).count()
-
 val dayCount = join.select("Rain_or_Drizzle", "Date").distinct().groupBy("Rain_or_Drizzle").agg(count("Rain_or_Drizzle").as("dayCount"))
 
 val join2 = dayCount.join(agg1, "Rain_or_Drizzle").withColumn("tripsPerDay",
     $"numberTrips"/$"dayCount"
     ).select("Rain_or_Drizzle","tripsPerDay","meanPass","meanFare","tipFareRatio")
 
-join2.show()
+val rainData = join2.filter($"Rain_or_Drizzle" === 1).select(
+    col("tripsPerDay").as("tripsPerDayRain"),
+    col("meanPass").as("meanPassRain"),
+    col("meanFare").as("meanFareRain"),
+    col("tipFareRatio").as("tipFareRatioRain")
+    ).withColumn("joinCol", lit("1"))
+
+val noRainData = join2.filter($"Rain_or_Drizzle" === 0).select(
+    "tripsPerDay","meanPass","meanFare","tipFareRatio"
+    ).withColumn("joinCol", lit("1"))
+
+//val changeData = rainData.alias("a").join(noRainData.alias("b"), col("a.joinCol") === col("b.joinCol"), "inner")
+
+val changeData = rainData.crossJoin(noRainData);
+
+changeData.show()
