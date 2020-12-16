@@ -54,13 +54,14 @@ public class Shared {
                         throw new Exception("Failed to parse " + arg);
                     }
                 } // end for
-                System.out.println("Input file. file=" + Shared.file);
-                System.out.println("Enable multithread. MTT=" + Shared.MTT);
-                System.out.println("Number of threads to use. NumMT=" + Shared.NumMT);
-                System.out.println("Data partition level. DPart=" + Shared.DPart);
-            } else {
-                System.out.println("No arguments passed!");
+              } else {
+                System.out.println("No arguments passed! Using defaults:");
             }
+            System.out.println("Input file. file=" + Shared.file);
+            System.out.println("Enable multithread. MTT=" + Shared.MTT);
+            System.out.println("Number of threads to use. NumMT=" + Shared.NumMT);
+            System.out.println("Data partition level. DPart=" + Shared.DPart);
+ 
             if (Shared.MTT) {
                 Shared.executor = Executors.newFixedThreadPool(Shared.NumMT);
             }

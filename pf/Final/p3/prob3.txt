@@ -10,7 +10,7 @@ not upload many GB’s of data to the dropbox.
 
     Taxi trip data from https://registry.opendata.aws/nyc-tlc-trip-records-pds/
     Downloaded using aws - s3 cp s3:"//nyc-tlc/trip data/yellow_tripdata_2011-06.csv" . --no-sign-request
-    Chose this dataset because it is large, 2.6GB per month of in 2011. Chose 2011 data because the weather data was complete for that year.
+    Chose this dataset because it is large, 2.6GB per month in 2011. Chose 2011 data because the weather data was complete for that year.
 
 
 b. The questions that you asked of your data in a reasonable format (e.g. a
@@ -39,10 +39,29 @@ c. The answers to the questions in a reasonable format.
     meanFare : 0.39
     tipFareRatio : 2
 
-    Conclusion: When it rains trips per day go up and tips go up.
+    Conclusion: When it rains trips per day go up and tips go up. This is only sample data from one month. 
+    Ideally I would choose random samples from days with and without rain and then use t.test to compare the means.
     
 
 
 d. The code you used to obtain your answers.
 
-    See file. prob3d.scala
+    See file(used on spark-shell). prob3d.scala
+
+
+e. Running on AWS EMR Spark cluster. Managed to connect ssh tunnel to master server and use firefox proxy to connect zeppelin. Per directions given by AWS cluster.
+
+See the Final_Prob3d.json for what was used on cluster.
+
+Timings
+
++---------------+-----------------+------------------+------------------+-------------------+
+|Rain_or_Drizzle|      tripsPerDay|          meanPass|          meanFare|       tipFareRatio|
++---------------+-----------------+------------------+------------------+-------------------+
+|              1|504487.2727272727|1.6618756036732163|10.428642445255198|0.09558045416001588|
+|              0|489987.5263157895|1.6660656130558855|10.381674532423952|0.09365293207675443|
++---------------+-----------------+------------------+------------------+-------------------+
+
+total=169054
+
+AWS cluster ran faster than local horton works which did 250228.

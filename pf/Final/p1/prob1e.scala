@@ -61,15 +61,21 @@ val extraI2 = extraI.withColumn("min_temp", min(extraI("TemperatureF")).over(win
 ).withColumn("max_temp", max(extraI("TemperatureF")).over(windowSpec)
 ).withColumn("temp_diff", $"max_temp" - $"min_temp")
 
-extraW2.show(false)
+
 val answerW = extraW2.orderBy($"temp_diff".desc).limit(1)
-// val seconds24 = answerW.select("totalSeconds").map(r => r.getLong(0)).collect.toList
-val answerW2 = extraW2.filter($"totalSeconds" >= seconds24(0) && $"totalSeconds" <= seconds24(0) + 60*60*24-1).orderBy("totalSeconds")
+answerW.show(false)
+val secondsW24 = answerW.select("totalSeconds").map(r => r.getLong(0)).collect.toList
+val answerW2 = extraW2.filter($"totalSeconds" >= secondsW24(0) && $"totalSeconds" <= secondsW24(0) + 60*60*24-1).orderBy("totalSeconds")
+// Note: Manually enter temperature found in answerW
 val answerW3 = answerW2.filter($"TemperatureF" === 39.2 || $"TemperatureF" === -11.9)
 answerW3.show(50, false)
 
-extraI2.show(false)
+
 val answerI = extraI2.orderBy($"temp_diff".desc).limit(1)
-val answerI2 = extraI2.filter($"totalSeconds" >= seconds24(0) && $"totalSeconds" <= seconds24(0) + 60*60*24-1).orderBy("totalSeconds")
-val answerI3 = answerI2.filter($"TemperatureF" === 35.1 || $"TemperatureF" === -0.9)
+answerI.show(false)
+val secondsI24 = answerI.select("totalSeconds").map(r => r.getLong(0)).collect.toList
+val answerI2 = extraI2.filter($"totalSeconds" >= secondsI24(0) && $"totalSeconds" <= secondsI24(0) + 60*60*24-1).orderBy("totalSeconds")
+// Note: Manually enter temperature found in answerI
+val answerI3 = answerI2.filter($"TemperatureF" === 57.2 || $"TemperatureF" === 1.0)
 answerI3.show(50, false)
+

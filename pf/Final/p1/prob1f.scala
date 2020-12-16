@@ -37,7 +37,7 @@ val merge = weatherW.union(weatherI).withColumn("dateString",
     from_unixtime($"totalSeconds","HH") cast "Int"
     )
 
-mergeW.count()
+merge.count()
 
 val merge2 = merge.groupBy("City", "Month", "Hour" ).agg(avg($"TemperatureF").as("avgTemp")).withColumn("diffFrom50",
     abs($"avgTemp" - 50)

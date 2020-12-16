@@ -32,15 +32,30 @@ CMT,2011-06-15 17:50:28,2011-06-15 18:11:32,1,1.1000000000000001,-73.96797800000
 CMT,2011-06-16 15:24:41,2011-06-16 15:28:41,1,0.69999999999999996,-73.999369000000002,40.739030999999997,1,N,-74.001597000000004,40.729320000000001,CSH,4.5,0,0.5,0,0,5
 CMT,2011-06-15 22:46:41,2011-06-15 22:49:09,0,0.59999999999999998,-74.004099999999994,40.747799999999998,1,N,-73.997799999999998,40.756500000000003,CSH,4.0999999999999996,0.5,0.5,0,0,5.0999999999999996
 */
+import org.apache.spark.mllib.stat.test
 
-val weather = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/finalp3/725060-94728.csv"
+val start = System.currentTimeMillis()
+val weatherLocation = "/user/maria_dev/finalp3/725060-94728.csv"
+val taxiLocation = "/user/maria_dev/finalp3/taxi_test.csv"
+
+// val taxiLocation = "/user/maria_dev/finalp3/yellow_tripdata_2011-06.csv"
+
+
+//s3 locations
+
+// val weatherLocation = "s3://halama1668/finalp3/725060-94728.csv"
+// val taxiLocation = "s3://halama1668/finalp3/yellow_tripdata_2011-06.csv"
+
+
+
+val weather = spark.read.format("csv").option("header", true).option("inferSchema",true).load(weatherLocation
     ).select("Date", "Year", "Month", "Day","Mean_Temp","Precipitation","Precip_Flag","Snow_Depth","Fog","Rain_or_Drizzle","Snow_or_Ice","Hail","Thunder","Tornado"
     ).withColumn("Date", 
     to_date($"Date", "yyyy-MM-dd")
     )
 
 
-val taxi = spark.read.format("csv").option("header", true).option("inferSchema",true).load("/user/maria_dev/finalp3/taxi_test.csv"
+val taxi = spark.read.format("csv").option("header", true).option("inferSchema",true).load(taxiLocation
     ).filter($"passenger_count" >= 1 && $"fare_amount" > 0
     ).select("pickup_datetime", "passenger_count", "fare_amount","tip_amount", "total_amount"
     ).withColumn("timestamp", 
@@ -77,6 +92,18 @@ val noRainData = join2.filter($"Rain_or_Drizzle" === 0).select(
 
 //val changeData = rainData.alias("a").join(noRainData.alias("b"), col("a.joinCol") === col("b.joinCol"), "inner")
 
-val changeData = rainData.crossJoin(noRainData);
+// val changeData = rainData.crossJoin(noRainData);
 
-changeData.show()
+// changeData.show()
+
+join2.show()
+
+val df = Seq((1, 3), (-2, 5), (0, 4), (3, -1), (2, -1)).toDF("group1", "group2") 
+
+val ttestResult = test.StudentTTest(df)
+
+val end = System.currentTimeMillis()
+
+val total = end -start
+
+System.out.println("total=" + total)
