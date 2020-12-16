@@ -20,11 +20,12 @@ If want to change defaults. If set DPart=2, 13 buildings will do 132 data partit
 
 Timings from my local box.
 
-13 buildings times (milliseconds). Data split into 12 partitions.
-single thread - 113071, 100196
-two threads - 75527, 70734
-three threads - 57655, 59412
-eight threads - 44997, 49658
-12 threads -  43340, 43943
+    13 buildings times (milliseconds). Data split into 12 partitions.
+    single thread - 113071, 100196
+    two threads - 75527, 70734
+    three threads - 57655, 59412
+    eight threads - 44997, 49658
+    12 threads -  43340, 43943
 
 Problem! Time to complete does not decrease linearly with more threads applied. Seems after 3 threads, the decrease is minimal.
+If I had more time, I would investigate why do not see a more linear decrease in time.
